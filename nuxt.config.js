@@ -61,7 +61,9 @@ export default {
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
     axios: {
         // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-        baseURL: '/',
+        // baseURL: '/',
+        baseURL: 'http://localhost/doctor-schedule/backend/',
+
     },
 
 
@@ -87,7 +89,7 @@ export default {
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: {},
     // setให้สามารถ run คำสั่ง npm run generate แล้วได้ ไฟล์ dist เอาข้างในไป ใส่ใน path ที่เราต้องการ
-    router: {
-        base: '/doctor-schedules',
-    },
+    // router: {
+    //     base: '/doctor-schedules',
+    // },
 }

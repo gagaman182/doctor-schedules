@@ -51,11 +51,12 @@
         ตารางเวรแพทย์โรงพยาบาลหาดใหญ่
       </v-list-item-title> -->
 
-      <!-- <v-spacer /> -->
+      <v-spacer />
       <!-- <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>mdi-menu</v-icon>
       </v-btn> -->
     </v-app-bar>
+
     <v-main>
       <v-container>
         <Nuxt />
@@ -102,7 +103,13 @@ export default {
       right: true,
       rightDrawer: false,
       title: 'ตารางเวรแพทย์',
+      dialog: false,
     }
+  },
+  methods: {
+    add_schedule() {
+      this.dialog = true
+    },
   },
 }
 </script>
@@ -119,7 +126,7 @@ img {
 }
 h1 {
   font-size: 32px;
-  background: -webkit-linear-gradient(#eee, #333);
+  background: -webkit-linear-gradient(#5584ac, #95d1cc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
