@@ -85,7 +85,6 @@
                   <v-text-field
                     label="แผนก"
                     prepend-icon="mdi-office-building"
-                    placeholder="Dense & Rounded"
                     filled
                     rounded
                     dense
@@ -113,7 +112,7 @@
                 </v-col>
 
                 <v-col cols="12" sm="7">
-                  <h2 class="text-h6 mb-2">ลำดับขั้นแพทย์</h2>
+                  <h2 class="text-h6 mb-2">แพทย์เวร</h2>
                   <v-chip-group v-model="doctor_level" column color="#069A8E">
                     <v-chip filter outlined
                       ><v-icon left> mdi-doctor </v-icon> STAFF
@@ -125,27 +124,26 @@
                       ><v-icon left> mdi-doctor </v-icon> INTERN
                     </v-chip>
                   </v-chip-group>
-                  {{ doctor_level }}
                 </v-col>
                 <v-col cols="12" sm="5">
                   <h2 class="text-h6 mb-2">เข้าเวร</h2>
                   <v-chip-group v-model="shift" column color="#069A8E">
-                    <v-chip filter outlined>
-                      <v-icon left> mdi-weather-sunset-up </v-icon> เช้า
+                    <v-chip filter outlined @input="shift_add()">
+                      <v-icon left> mdi-weather-sunset-up </v-icon>
+                      เช้า
                     </v-chip>
-                    <v-chip filter outlined
+                    <v-chip filter outlined @input="shift_add()"
                       ><v-icon left> mdi-weather-sunset-down </v-icon> บ่าย
                     </v-chip>
-                    <v-chip filter outlined
+                    <v-chip filter outlined @input="shift_add()"
                       ><v-icon left> mdi-weather-night </v-icon> ดึก
                     </v-chip>
                   </v-chip-group>
-                  {{ shift }}
                 </v-col>
                 <v-col cols="12">
                   <v-divider />
                   <h2 class="text-h6 mb-2">ช่วงเวลา</h2>
-                  <v-chip-group v-model="time" column color="#069A8E">
+                  <v-chip-group v-model="time" column color="#069A8E" multiple>
                     <v-chip filter outlined
                       ><v-icon left> mdi-alarm-check </v-icon> 8:30-12:30
                     </v-chip>
@@ -158,12 +156,22 @@
                     <v-chip filter outlined
                       ><v-icon left> mdi-alarm-check </v-icon>20:30-0:30</v-chip
                     >
+                    <v-chip filter outlined
+                      ><v-icon left> mdi-alarm-check </v-icon>0:30-8:30</v-chip
+                    >
                   </v-chip-group>
-                  {{ time }}
                 </v-col>
               </v-row>
             </v-card-text>
             <v-card-actions class="justify-end">
+              <v-btn
+                x-large
+                color="#069A8E"
+                @click="add_er_dialog"
+                class="white--text text-h6"
+                >เพิ่ม</v-btn
+              >
+
               <v-btn
                 x-large
                 color="red"
@@ -180,10 +188,12 @@
 </template>
 <script>
 import axios from 'axios'
+
 export default {
   props: ['dialog_er'],
   data() {
     return {
+      uhid: '',
       datestart: new Date().toISOString().substr(0, 10),
       er: 'ER',
       doctors: '',
@@ -191,6 +201,7 @@ export default {
       doctor_level: '',
       shift: '',
       time: '',
+      message: '',
     }
   },
   mounted() {
@@ -209,6 +220,78 @@ export default {
         .then((response) => {
           this.doctors = response.data
         })
+    },
+    //เลือกเวลา
+    shift_add() {
+      if (this.shift == '0') {
+        this.time = [0, 1]
+      } else if (this.shift == '1') {
+        this.time = [2, 3]
+      } else if (this.shift == '2') {
+        this.time = [4]
+      } else {
+        this.time = ''
+      }
+    },
+    add_er_dialog() {
+      if (
+        !this.datestart ||
+        !this.er ||
+        !this.doctor ||
+        this.doctor_level == null ||
+        this.shift == null ||
+        this.time == null
+      ) {
+        this.$swal({
+          title: 'แจ้งเตือน',
+          text: 'ระบุข้อมูลไม่ครบ',
+          icon: 'error',
+          confirmButtonText: 'ตกลง',
+        })
+      } else {
+        const { v4: uuidv4 } = require('uuid')
+        this.uhid = uuidv4()
+
+        axios
+          .post(`${this.$axios.defaults.baseURL}schedules_add.php`, {
+            uhid: this.uhid,
+            datestart: this.datestart,
+            er: this.er,
+            doctor: this.doctor,
+            doctor_level: this.doctor_level,
+            shift: this.shift,
+            time: this.time.toString(),
+          })
+          .then((response) => {
+            this.message = response.data
+            if (this.message[0].message === 'เพิ่มข้อมูลสำเร็จ') {
+              this.$swal({
+                title: 'สถานะการเพิ่ม',
+                text: this.message[0].message,
+                icon: 'success',
+                confirmButtonText: 'ตกลง',
+              })
+              this.clear_form()
+              this.close_er_dialog()
+            } else {
+              this.$swal({
+                title: 'สถานะการเพิ่ม',
+                text: this.message[0].message,
+                icon: 'error',
+                confirmButtonText: 'ตกลง',
+              })
+            }
+          })
+      }
+    },
+    clear_form() {
+      this.uhid = ''
+      this.datestart = ''
+      this.er = ''
+      this.doctor = ''
+      this.doctor_level = ''
+      this.shift = ''
+      this.time = ''
     },
   },
 }

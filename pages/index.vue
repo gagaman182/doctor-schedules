@@ -147,6 +147,7 @@ export default {
     //ส่งค่า false กลับมา
     close_er_dialog(er) {
       this.dialog_er = er
+      this.$router.go()
     },
     //dp
     open_dp_dialog() {

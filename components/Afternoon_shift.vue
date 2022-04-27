@@ -36,10 +36,31 @@
       <v-icon class="text-h4" color="#FFF56D">mdi-doctor </v-icon></v-card-title
     >
 
-    <v-card-text>
-      <div class="text-h6 green--text">นพ ศุภชัย จรัสกร</div>
-      <div class="text-h6 green--text">นพ ศุภชัย จรัสกร</div>
-    </v-card-text>
+   <v-card-text v-for="sc in schedule_staff" :key="sc.uhid">
+        <div class="text-h6 green--text">
+          {{ sc.doctor_name }}
+        </div>
+         <v-chip-group v-model="sc.time4" column color="#069A8E" multiple >
+          <v-chip filter outlined  v-show="hidetime"
+            ><v-icon left> mdi-alarm-check </v-icon> 8:30-12:30
+          </v-chip>
+          <v-chip filter outlined v-show="hidetime"
+            ><v-icon left> mdi-alarm-check </v-icon> 12:30-16:30
+          </v-chip>
+           <v-chip filter outlined
+            ><v-icon left> mdi-alarm-check </v-icon> 16:30-20:30
+          </v-chip>
+          <v-chip filter outlined
+            ><v-icon left> mdi-alarm-check </v-icon>20:30-0:30</v-chip
+          >
+          <!-- <v-chip filter outlined
+            ><v-icon left> mdi-alarm-check </v-icon>0:30-8:30</v-chip
+          >  -->
+        </v-chip-group>
+      </v-card-text>
+
+     
+      <v-divider class="mx-4"></v-divider>
 
     <v-card-text>
       <v-chip-group
@@ -128,3 +149,59 @@
     </v-card-actions>
   </v-card>
 </template>
+<script>
+import axios from 'axios'
+
+export default {
+  data() {
+    return {
+      schedule_staff: '',
+      schedule_resident: '',
+      schedule_intern: '',
+      display: false,
+      hidetime: false,
+    }
+  },
+  mounted() {
+    this.fecth_schedule_staff()
+    this.fecth_schedule_resident()
+    this.fecth_schedule_intern()
+  },
+  methods: {
+    // ดึง schedule
+    async fecth_schedule_staff() {
+      await axios
+        .get(
+          `${this.$axios.defaults.baseURL}schedules_select_staff_afternoon.php`
+        )
+        .then((response) => {
+          this.schedule_staff = response.data
+
+          if (this.schedule_staff.length > 0) {
+            this.display = true
+          } else {
+            this.display = false
+          }
+        })
+    },
+    async fecth_schedule_resident() {
+      await axios
+        .get(
+          `${this.$axios.defaults.baseURL}schedules_select_resident_afternoon.php`
+        )
+        .then((response) => {
+          this.schedule_resident = response.data
+        })
+    },
+    async fecth_schedule_intern() {
+      await axios
+        .get(
+          `${this.$axios.defaults.baseURL}schedules_select_intern_afternoon.php`
+        )
+        .then((response) => {
+          this.schedule_intern = response.data
+        })
+    },
+  },
+}
+</script>
