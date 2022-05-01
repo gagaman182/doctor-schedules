@@ -1,7 +1,7 @@
 <?php
 header('Access-Control-Allow-Origin: *');
 
-include 'conn.php';
+include '../conn.php';
 
 
 
@@ -27,7 +27,7 @@ WHERE
 	now(),
 	'%Y-%m-%d')
   and schedules.doctor_level = 1
-  and schedules.shift = 0
+  and schedules.shift = 1
      
       ";
 

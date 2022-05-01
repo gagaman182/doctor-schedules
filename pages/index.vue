@@ -40,6 +40,11 @@
         <v-divider />
         <v-card-title>
           <v-spacer />
+          <div class="pr-2">
+            <v-btn class="white--text" x-large color="#F8B400" @click="refresh">
+              <v-icon>mdi-refresh-circle </v-icon>
+            </v-btn>
+          </div>
           <v-btn
             class="white--text"
             x-large
@@ -134,6 +139,7 @@ export default {
     Add_schedule_er,
     Add_schedule_department,
   },
+
   methods: {
     //er
     open_er_dialog() {
@@ -147,7 +153,8 @@ export default {
     //ส่งค่า false กลับมา
     close_er_dialog(er) {
       this.dialog_er = er
-      this.$router.go()
+
+      // setInterval(this.$router.go(), 5000)
     },
     //dp
     open_dp_dialog() {
@@ -161,6 +168,9 @@ export default {
     //ส่งค่า false กลับมา
     close_dp_dialog(dp) {
       this.dialog_dp = dp
+    },
+    refresh() {
+      this.$router.go()
     },
   },
 }

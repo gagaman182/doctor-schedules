@@ -1,9 +1,13 @@
 <?php
+header('Content-Type:application/json');
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: PUT');
+header('Access-Control-Allow-Headers: Acess-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods,Authorization');
+
 
 include 'conn.php';
-
-
+$data = json_decode(file_get_contents('php://input'), true);
+$uhid = $data['uhid'];
 
 // $sql = "SELECT doc_code,concat(doc_code,'-',name) as name  from doctor
 $sql = "SELECT
@@ -22,14 +26,8 @@ FROM
 LEFT JOIN doctor on schedules.doctor = doctor.doc_code
 LEFT JOIN type_er on schedules.doctor_level = type_er.code
 LEFT JOIN shift on 	schedules.shift = shift.code
-WHERE
-	DATE_FORMAT( datestart, '%Y-%m-%d' ) = DATE_FORMAT(
-	now(),
-	'%Y-%m-%d')
-  and schedules.doctor_level = 0
-  and schedules.shift = 1
-     
-      ";
+WHERE uhid = '" . $uhid . "'
+";
 
 
 $return_arr = array();
@@ -41,9 +39,9 @@ if ($result = mysqli_query($conn, $sql)) {
     $a['department'] = $row['department'];
     $a['doctor'] = $row['doctor'];
     $a['doctor_name'] = $row['doctor_name'];
-    $a['doctor_level'] = $row['doctor_level'];
+    $a['doctor_level'] = intval($row['doctor_level']);
     $a['doctor_level_name'] = $row['doctor_level_name'];
-    $a['shift'] = $row['shift'];
+    $a['shift'] = intval($row['shift']);
     $a['shift_name'] = $row['shift_name'];
     $a['time2'] =  explode(', ', $row['time']);
     //แยก เอาข้างในมา

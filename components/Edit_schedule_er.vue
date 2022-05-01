@@ -167,9 +167,16 @@
               <v-btn
                 x-large
                 color="#069A8E"
-                @click="add_er_dialog"
+                @click="edit_schedule"
                 class="white--text text-h6"
-                >เพิ่ม</v-btn
+                >แก้ไข</v-btn
+              >
+              <v-btn
+                x-large
+                color="#F8B400"
+                @click="delete_schedule"
+                class="white--text text-h6"
+                >ลบ</v-btn
               >
 
               <v-btn
@@ -190,14 +197,15 @@
 import axios from 'axios'
 
 export default {
-  props: ['dialog_er'],
+  props: ['dialog_er', 'uhid_edit', 'schedule_staff_id'],
   data() {
     return {
       uhid: '',
-      datestart: new Date().toISOString().substr(0, 10),
+      datestart: '',
       er: 'ER',
       doctors: '',
       doctor: '',
+      doctor_name: '',
       doctor_level: '',
       shift: '',
       time: '',
@@ -206,6 +214,13 @@ export default {
   },
   mounted() {
     this.fecth_doctor()
+    this.uhid = this.schedule_staff_id[0].uhid
+    this.datestart = this.schedule_staff_id[0].datestart
+    this.doctor = this.schedule_staff_id[0].doctor
+    this.doctor_name = this.schedule_staff_id[0].doctor_name
+    this.doctor_level = this.schedule_staff_id[0].doctor_level
+    this.shift = this.schedule_staff_id[0].shift
+    this.time = this.schedule_staff_id[0].time4
   },
 
   methods: {
@@ -233,27 +248,24 @@ export default {
         this.time = ''
       }
     },
-    add_er_dialog() {
-      if (
-        !this.datestart ||
-        !this.er ||
-        !this.doctor ||
-        this.doctor_level == null ||
-        this.shift == null ||
-        this.time == null
-      ) {
+    edit_schedule() {
+      //alert(this.uhid)
+      // alert(this.datestart)
+      // alert(this.er)
+      // alert(this.doctor)
+      // alert(this.doctor_level)
+      // alert(this.shift)
+      // alert(this.time)
+      if (!this.uhid) {
         this.$swal({
           title: 'แจ้งเตือน',
-          text: 'ระบุข้อมูลไม่ครบ',
+          text: 'ไม่พบลำดับการแก้ไขข้อมูล',
           icon: 'error',
           confirmButtonText: 'ตกลง',
         })
       } else {
-        const { v4: uuidv4 } = require('uuid')
-        this.uhid = uuidv4()
-
         axios
-          .post(`${this.$axios.defaults.baseURL}schedules_add.php`, {
+          .put(`${this.$axios.defaults.baseURL}schedules_update.php`, {
             uhid: this.uhid,
             datestart: this.datestart,
             er: this.er,
@@ -264,9 +276,9 @@ export default {
           })
           .then((response) => {
             this.message = response.data
-            if (this.message[0].message === 'เพิ่มข้อมูลสำเร็จ') {
+            if (this.message[0].message === 'แก้ไขข้อมูลสำเร็จ') {
               this.$swal({
-                title: 'สถานะการเพิ่ม',
+                title: 'สถานะการแก้ไข',
                 text: this.message[0].message,
                 icon: 'success',
                 confirmButtonText: 'ตกลง',
@@ -284,6 +296,7 @@ export default {
           })
       }
     },
+
     clear_form() {
       this.uhid = ''
       this.datestart = ''
@@ -294,6 +307,57 @@ export default {
       this.time = ''
       //refesh after add data
       setInterval(this.$router.go(), 5000)
+    },
+    //ลบ ข่อมูล
+    delete_schedule() {
+      //if (!this.epidem_report_quid) {
+      if (!this.uhid) {
+        this.$swal({
+          title: 'แจ้งเตือน',
+          text: 'ไม่พบลำดับการลบข้อมูล',
+          icon: 'error',
+          confirmButtonText: 'ตกลง',
+        })
+      } else {
+        this.$swal({
+          title: 'คุณแน่ใจว่าต้องการลบข้อมูลนี้?',
+          text: 'แพทย์ ' + this.doctor_name + ' เวรวันที่ ' + this.datestart,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#51adcf',
+          cancelButtonColor: '#686d76',
+          confirmButtonText: 'ลบ',
+          cancelButtonText: 'ยกเลิก',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            axios
+              .put(`${this.$axios.defaults.baseURL}schedules_delete.php`, {
+                uhid: this.uhid,
+              })
+              .then((response) => {
+                this.message = response.data
+
+                if (this.message[0].message === 'ลบข้อมูลสำเร็จ') {
+                  this.$swal({
+                    title: 'สถานะการลบ',
+                    text: this.message[0].message,
+                    icon: 'success',
+                    confirmButtonText: 'ตกลง',
+                  })
+                  this.close_er_dialog()
+                  this.clear_form()
+                } else {
+                  this.$swal({
+                    title: 'สถานะการลบ',
+                    text: this.message[0].message,
+                    icon: 'error',
+                    confirmButtonText: 'ตกลง',
+                  })
+                }
+              })
+          }
+        })
+      }
     },
   },
 }

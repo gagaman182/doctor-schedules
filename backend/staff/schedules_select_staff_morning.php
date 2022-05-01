@@ -1,7 +1,7 @@
 <?php
 header('Access-Control-Allow-Origin: *');
 
-include 'conn.php';
+include '../conn.php';
 
 
 
