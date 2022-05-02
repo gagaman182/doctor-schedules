@@ -32,7 +32,7 @@
       </div>
 
       <v-card>
-        <v-card-title class="text-h3 red--text">
+        <v-card-title class="text-h4 red--text">
           Emergency Room
           <v-spacer />
           <v-icon class="text-h3 mb-2 red--text">mdi-car-emergency </v-icon>
@@ -66,7 +66,7 @@
         </v-card-actions>
       </v-card>
       <v-card>
-        <v-card-title class="text-h3 blue--text">
+        <v-card-title class="text-h4 blue--text">
           Other Departments
           <v-spacer />
           <v-icon class="text-h3 mb-2" color="blue"
@@ -153,7 +153,7 @@ export default {
     //ส่งค่า false กลับมา
     close_er_dialog(er) {
       this.dialog_er = er
-
+      // this.$nuxt.refresh()
       // setInterval(this.$router.go(), 5000)
     },
     //dp
@@ -171,6 +171,7 @@ export default {
     },
     refresh() {
       this.$router.go()
+      //this.$nuxt.refresh()
     },
   },
 }

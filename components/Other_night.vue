@@ -12,55 +12,128 @@
       <v-icon class="icons"> mdi-weather-sunset-down </v-icon>
       <v-toolbar-title>นอกเวลา</v-toolbar-title>
     </v-toolbar>
-    <!-- <v-card-text>
-      <v-row align="center" class="mx-0">
-        <div class="grey--text ms-4">4.5 (413)</div>
-      </v-row>
 
-      <div class="my-4 text-subtitle-1">$ • Italian, Cafe</div>
-
-      <div>
-        Small plates, salads & sandwiches - an intimate setting with 12 indoor
-        seats plus patio seating.
-      </div>
-    </v-card-text> -->
-
-    <v-card-title
-      >SURG
-      <v-row align="center" class="mx-0">
-        <div class="grey--text ms-4">Department</div>
-      </v-row>
-      <v-spacer />
-      <v-icon class="text-h4" color="#FF6FB5">mdi-doctor </v-icon></v-card-title
-    >
-
-    <v-card-text>
-      <div class="text-h6 green--text">นพ ศุภชัย จรัสกร</div>
-      <div class="text-h6 green--text">นพ ศุภชัย จรัสกร</div>
-    </v-card-text>
-
-    <v-card-text>
-      <v-chip-group
-        multiple
-        v-model="selection"
-        active-class="deep-purple accent-4 white--text"
-        column
+    <div v-for="sc in schedule_outtime" :key="sc.uhid">
+      <v-card-title
+        >{{ sc.department }}
+        <v-row align="center" class="mx-0">
+          <div class="grey--text ms-4">Department</div>
+        </v-row>
+        <v-spacer />
+        <v-icon class="text-h4" color="#FF6FB5"
+          >mdi-doctor
+        </v-icon></v-card-title
       >
-        <v-chip>8:30-12:30</v-chip>
 
-        <v-chip>12:30-16:30</v-chip>
-
-        <!-- <v-chip>16:30-20:30</v-chip>
-
-        <v-chip>20:30-0:30</v-chip> -->
-      </v-chip-group>
-    </v-card-text>
-    <v-divider class="mx-4"></v-divider>
-
-    <v-card-actions>
-      <!-- <v-btn color="deep-purple lighten-2" text @click="reserve">
-        Reserve
-      </v-btn> -->
-    </v-card-actions>
+      <v-card-title>
+        <div
+          id="name"
+          class="text-h6 green--text"
+          @click="edit_schedule(sc.uhid)"
+        >
+          {{ sc.doctor_name }}
+        </div>
+        <v-spacer />
+        <div
+          id="name"
+          class="text-h6 blue--text"
+          @click="edit_schedule(sc.uhid)"
+        >
+          {{ sc.doctor_level_name }}
+        </div>
+      </v-card-title>
+      <v-card-text>
+        <v-chip-group v-model="sc.time4" column color="#86C6F4" multiple>
+          <v-chip filter outlined class="not-active" v-show="hidetime"
+            ><v-icon left> mdi-alarm-check </v-icon> 8:30-12:30
+          </v-chip>
+          <v-chip filter outlined class="not-active" v-show="hidetime"
+            ><v-icon left> mdi-alarm-check </v-icon> 12:30-16:30
+          </v-chip>
+          <v-chip filter outlined
+            ><v-icon left> mdi-alarm-check </v-icon> 16:30-20:30
+          </v-chip>
+          <v-chip filter outlined
+            ><v-icon left> mdi-alarm-check </v-icon>20:30-0:30</v-chip
+          >
+          <v-chip filter outlined
+            ><v-icon left> mdi-alarm-check </v-icon>0:30-8:30</v-chip
+          >
+        </v-chip-group>
+      </v-card-text>
+      <v-divider class="mx-4"></v-divider>
+    </div>
   </v-card>
 </template>
+<script>
+import axios from 'axios'
+import Edit_schedule_er from '~/components/Edit_schedule_er.vue'
+
+export default {
+  data() {
+    return {
+      schedule_outtime: '',
+      display: false,
+      dialog_er: false,
+      hidetime: false,
+      uhid: '',
+      schedule_staff_id: '',
+    }
+  },
+  components: {
+    Edit_schedule_er,
+  },
+  mounted() {
+    this.fecth_schedule_staff()
+  },
+  methods: {
+    // ดึง schedule
+    async fecth_schedule_staff() {
+      await axios
+        .get(
+          `${this.$axios.defaults.baseURL}intime/schedules_select_outtime.php`
+        )
+        .then((response) => {
+          this.schedule_outtime = response.data
+
+          if (this.schedule_staff.length > 0) {
+            this.display = true
+          } else {
+            this.display = false
+          }
+        })
+    },
+
+    edit_schedule(uhid) {
+      this.uhid = uhid
+      alert(this.uhid)
+      // await axios
+      //   .post(`${this.$axios.defaults.baseURL}schedules_select_id.php`, {
+      //     uhid: this.uhid,
+      //   })
+      //   .then((response) => {
+      //     this.schedule_staff_id = response.data
+      //     if (this.dialog_er == true) {
+      //       this.dialog_er = false
+      //       this.dialog_er = true
+      //     } else {
+      //       this.dialog_er = true
+      //     }
+      //   })
+    },
+    //ส่งค่า false กลับมา
+    close_er_dialog(er) {
+      this.dialog_er = er
+    },
+  },
+}
+</script>
+<style>
+#name {
+  cursor: pointer;
+}
+.not-active {
+  pointer-events: none;
+  cursor: default;
+}
+</style>

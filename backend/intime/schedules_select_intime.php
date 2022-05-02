@@ -26,9 +26,9 @@ WHERE
 	DATE_FORMAT( datestart, '%Y-%m-%d' ) = DATE_FORMAT(
 	now(),
 	'%Y-%m-%d')
-  and schedules.doctor_level = 0
-  and schedules.shift = 1
-  and schedules.department = '1'
+  -- and schedules.doctor_level = 0
+   and schedules.shift = 0
+  and schedules.department <> '1'
      
       ";
 

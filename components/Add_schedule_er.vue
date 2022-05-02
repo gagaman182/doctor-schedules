@@ -82,17 +82,19 @@
                   </v-menu>
                 </v-col>
                 <v-col cols="12" ml-100>
-                  <v-text-field
-                    label="แผนก"
+                  <v-autocomplete
                     prepend-icon="mdi-office-building"
+                    :items="departments"
+                    v-model="department"
+                    item-text="name"
+                    item-value="name"
+                    label="แผนก"
+                    dense
                     filled
                     rounded
-                    dense
-                    readonly
                     outlined
-                    v-model="er"
                     color="#069A8E"
-                  ></v-text-field>
+                  ></v-autocomplete>
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
@@ -195,7 +197,8 @@ export default {
     return {
       uhid: '',
       datestart: new Date().toISOString().substr(0, 10),
-      er: 'ER',
+      department: 'ER',
+      departments: '',
       doctors: '',
       doctor: '',
       doctor_level: '',
@@ -206,6 +209,7 @@ export default {
   },
   mounted() {
     this.fecth_doctor()
+    this.fecth_department()
   },
 
   methods: {
@@ -219,6 +223,14 @@ export default {
         .get(`${this.$axios.defaults.baseURL}doctor.php`)
         .then((response) => {
           this.doctors = response.data
+        })
+    },
+    //ดึง department
+    async fecth_department() {
+      await axios
+        .get(`${this.$axios.defaults.baseURL}department.php`)
+        .then((response) => {
+          this.departments = response.data
         })
     },
     //เลือกเวลา
@@ -236,7 +248,7 @@ export default {
     add_er_dialog() {
       if (
         !this.datestart ||
-        !this.er ||
+        !this.department ||
         !this.doctor ||
         this.doctor_level == null ||
         this.shift == null ||
@@ -256,7 +268,7 @@ export default {
           .post(`${this.$axios.defaults.baseURL}schedules_add.php`, {
             uhid: this.uhid,
             datestart: this.datestart,
-            er: this.er,
+            department: this.department,
             doctor: this.doctor,
             doctor_level: this.doctor_level,
             shift: this.shift,
@@ -287,13 +299,14 @@ export default {
     clear_form() {
       this.uhid = ''
       this.datestart = ''
-      this.er = ''
+      this.department = ''
       this.doctor = ''
       this.doctor_level = ''
       this.shift = ''
       this.time = ''
       //refesh after add data
       setInterval(this.$router.go(), 5000)
+      //setInterval(window.location.reload(true), 5000)
     },
   },
 }

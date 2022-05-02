@@ -23,9 +23,162 @@
               </v-btn>
             </v-toolbar>
             <v-card-text>
-              <div class="text-h2 pa-12">DP</div>
+              <!-- <div class="text-h5 pa-12 mx-2">ER</div> -->
+
+              <v-list-item two-line>
+                <v-list-item-content>
+                  <v-list-item-title class="text-h5 grey--text">
+                    เพิ่มข้อมูลตารางเวรประจำวัน
+                  </v-list-item-title>
+                  <v-list-item-subtitle>แผนกในโรงพยาบาล</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-row>
+                <v-col>
+                  <v-menu
+                    ref="menu"
+                    v-model="menu"
+                    :close-on-content-click="false"
+                    :return-value.sync="date"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="datestart"
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                        label="วันที่"
+                        filled
+                        rounded
+                        outlined
+                        dense
+                        color="#069A8E"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="datestart"
+                      scrollable
+                      locale="th-TH"
+                      color="#069A8E"
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn text color="#069A8E" @click="menu = false">
+                        ยกเลิก
+                      </v-btn>
+                      <v-btn
+                        text
+                        color="#069A8E"
+                        @click="$refs.menu.save(datestart)"
+                      >
+                        ตกลง
+                      </v-btn>
+                    </v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-col cols="12" ml-100>
+                  <v-autocomplete
+                    prepend-icon="mdi-office-building"
+                    :items="departments"
+                    v-model="department"
+                    item-text="name"
+                    item-value="name"
+                    label="แผนก"
+                    dense
+                    filled
+                    rounded
+                    outlined
+                    color="#069A8E"
+                  ></v-autocomplete>
+                </v-col>
+                <v-col cols="12">
+                  <v-autocomplete
+                    prepend-icon="mdi-doctor"
+                    :items="doctors"
+                    v-model="doctor"
+                    item-text="name"
+                    item-value="doc_code"
+                    label="แพทย์"
+                    dense
+                    filled
+                    rounded
+                    outlined
+                    color="#069A8E"
+                  ></v-autocomplete>
+                  <v-divider />
+                </v-col>
+
+                <v-col cols="12" sm="7">
+                  <h2 class="text-h6 mb-2">แพทย์เวร</h2>
+                  <v-chip-group v-model="doctor_level" column color="#069A8E">
+                    <v-chip filter outlined
+                      ><v-icon left> mdi-doctor </v-icon> STAFF
+                    </v-chip>
+                    <v-chip filter outlined
+                      ><v-icon left> mdi-doctor </v-icon> RESIDENT
+                    </v-chip>
+                    <v-chip filter outlined
+                      ><v-icon left> mdi-doctor </v-icon> INTERN
+                    </v-chip>
+                    <v-chip filter outlined
+                      ><v-icon left> mdi-doctor </v-icon> รับ REFER
+                    </v-chip>
+                    <v-chip filter outlined
+                      ><v-icon left> mdi-doctor </v-icon> รับ CONSULT
+                    </v-chip>
+                  </v-chip-group>
+                </v-col>
+                <v-col cols="12" sm="5">
+                  <h2 class="text-h6 mb-2">เข้าเวร</h2>
+                  <v-chip-group v-model="shift" column color="#069A8E">
+                    <v-chip filter outlined @input="shift_add()">
+                      <v-icon left> mdi-weather-sunset-up </v-icon>
+                      ในเวลา
+                    </v-chip>
+                    <v-chip filter outlined @input="shift_add()"
+                      ><v-icon left> mdi-weather-sunset-down </v-icon> นอกเวลา
+                    </v-chip>
+                    <!-- <v-chip filter outlined @input="shift_add()"
+                      ><v-icon left> mdi-weather-night </v-icon> ดึก
+                    </v-chip> -->
+                  </v-chip-group>
+                </v-col>
+                <v-col cols="12">
+                  <v-divider />
+                  <h2 class="text-h6 mb-2">ช่วงเวลา</h2>
+                  <v-chip-group v-model="time" column color="#069A8E" multiple>
+                    <v-chip filter outlined
+                      ><v-icon left> mdi-alarm-check </v-icon> 8:30-12:30
+                    </v-chip>
+                    <v-chip filter outlined
+                      ><v-icon left> mdi-alarm-check </v-icon> 12:30-16:30
+                    </v-chip>
+                    <v-chip filter outlined
+                      ><v-icon left> mdi-alarm-check </v-icon> 16:30-20:30
+                    </v-chip>
+                    <v-chip filter outlined
+                      ><v-icon left> mdi-alarm-check </v-icon>20:30-0:30</v-chip
+                    >
+                    <v-chip filter outlined
+                      ><v-icon left> mdi-alarm-check </v-icon>0:30-8:30</v-chip
+                    >
+                  </v-chip-group>
+                </v-col>
+              </v-row>
             </v-card-text>
             <v-card-actions class="justify-end">
+              <v-btn
+                x-large
+                color="#069A8E"
+                @click="add_dp_dialog"
+                class="white--text text-h6"
+                >เพิ่ม</v-btn
+              >
+
               <v-btn
                 x-large
                 color="red"
@@ -41,13 +194,125 @@
   </v-row>
 </template>
 <script>
+import axios from 'axios'
 export default {
   props: ['dialog_dp'],
-
+  data() {
+    return {
+      uhid: '',
+      datestart: new Date().toISOString().substr(0, 10),
+      department: '',
+      departments: '',
+      doctors: '',
+      doctor: '',
+      doctor_level: '',
+      shift: '',
+      time: '',
+      message: '',
+    }
+  },
+  mounted() {
+    this.fecth_doctor()
+    this.fecth_department()
+  },
   methods: {
     close_dp_dialog(event) {
       this.dialog_dp = false
       this.$emit('closedialog_dp', this.dialog_dp)
+    },
+    // ดึง doctor
+    async fecth_doctor() {
+      await axios
+        .get(`${this.$axios.defaults.baseURL}doctor.php`)
+        .then((response) => {
+          this.doctors = response.data
+        })
+    },
+    //ดึง department
+    async fecth_department() {
+      await axios
+        .get(`${this.$axios.defaults.baseURL}department.php`)
+        .then((response) => {
+          this.departments = response.data
+        })
+    },
+    //เลือกเวลา
+    shift_add() {
+      if (this.shift == '0') {
+        this.time = [0, 1]
+      } else if (this.shift == '1') {
+        this.time = [2, 3, 4]
+      }
+      // else if (this.shift == '2') {
+      //   this.time = [4]
+      // }
+      else {
+        this.time = ''
+      }
+    },
+    add_dp_dialog() {
+      if (
+        !this.datestart ||
+        !this.department ||
+        !this.doctor ||
+        this.doctor_level == null ||
+        this.shift == null ||
+        this.time == null
+      ) {
+        this.$swal({
+          title: 'แจ้งเตือน',
+          text: 'ระบุข้อมูลไม่ครบ',
+          icon: 'error',
+          confirmButtonText: 'ตกลง',
+        })
+      } else {
+        // alert(this.department)
+        const { v4: uuidv4 } = require('uuid')
+        this.uhid = uuidv4()
+
+        axios
+          .post(`${this.$axios.defaults.baseURL}schedules_add.php`, {
+            uhid: this.uhid,
+            datestart: this.datestart,
+            department: this.department,
+            doctor: this.doctor,
+            doctor_level: this.doctor_level,
+            shift: this.shift,
+            time: this.time.toString(),
+          })
+          .then((response) => {
+            this.message = response.data
+            if (this.message[0].message === 'เพิ่มข้อมูลสำเร็จ') {
+              this.$swal({
+                title: 'สถานะการเพิ่ม',
+                text: this.message[0].message,
+                icon: 'success',
+                confirmButtonText: 'ตกลง',
+              })
+              this.clear_form()
+              this.close_er_dialog()
+            } else {
+              this.$swal({
+                title: 'สถานะการเพิ่ม',
+                text: this.message[0].message,
+                icon: 'error',
+                confirmButtonText: 'ตกลง',
+              })
+            }
+          })
+      }
+    },
+    clear_form() {
+      this.uhid = ''
+      this.datestart = ''
+      this.er = ''
+      this.doctor = ''
+      this.doctor_level = ''
+      this.shift = ''
+      this.time = ''
+      //refesh after add data
+      setInterval(this.$router.go(), 5000)
+      //setInterval(window.location.reload(true), 5000)
     },
   },
 }

@@ -6,7 +6,7 @@ header('Access-Control-Allow-Headers: Acess-Control-Allow-Headers,Content-Type,A
 $data = json_decode(file_get_contents('php://input'), true);
 $uhid = $data['uhid'];
 $datestart = $data['datestart'];
-$department = $data['er'];
+$department = $data['department'];
 $doctor = $data['doctor'];
 $doctor_level = $data['doctor_level'];
 $shift = $data['shift'];

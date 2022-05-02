@@ -1,5 +1,5 @@
 <template>
-  <v-card :loading="loading" class="mx-auto my-12" max-width="374">
+  <v-card :loading="loading" class="mx-auto my-12">
     <template slot="progress">
       <v-progress-linear color="deep-purple" indeterminate></v-progress-linear>
     </template>
@@ -30,10 +30,10 @@
         <!-- <div class="text-h6 green--text">ไม่พบข้อมูล</div> -->
 
         <v-chip-group v-model="sc.time4" column color="#069A8E" multiple>
-          <v-chip filter outlined
+          <v-chip filter outlined class="not-active"
             ><v-icon left> mdi-alarm-check </v-icon> 8:30-12:30
           </v-chip>
-          <v-chip filter outlined
+          <v-chip filter outlined class="not-active"
             ><v-icon left> mdi-alarm-check </v-icon> 12:30-16:30
           </v-chip>
           <!-- <v-chip filter outlined
@@ -50,11 +50,7 @@
 
       <v-divider class="mx-4"></v-divider>
     </div>
-    <v-card-actions>
-      <!-- <v-btn color="deep-purple lighten-2" text @click="reserve">
-        Reserve
-      </v-btn> -->
-    </v-card-actions>
+
     <v-card-title
       >RESIDENT
       <v-row align="center" class="mx-0">
@@ -69,10 +65,10 @@
       </div>
 
       <v-chip-group v-model="sc.time4" column color="#069A8E" multiple>
-        <v-chip filter outlined
+        <v-chip filter outlined class="not-active"
           ><v-icon left> mdi-alarm-check </v-icon> 8:30-12:30
         </v-chip>
-        <v-chip filter outlined
+        <v-chip filter outlined class="not-active"
           ><v-icon left> mdi-alarm-check </v-icon> 12:30-16:30
         </v-chip>
       </v-chip-group>
@@ -93,10 +89,10 @@
       <!-- <v-list-item-title class=" blue--text">{{ sc.doctor_name }}</v-list-item-title> -->
 
       <v-chip-group v-model="sc.time4" column color="#069A8E" multiple>
-        <v-chip filter outlined
+        <v-chip filter outlined class="not-active"
           ><v-icon left> mdi-alarm-check </v-icon> 8:30-12:30
         </v-chip>
-        <v-chip filter outlined
+        <v-chip filter outlined class="not-active"
           ><v-icon left> mdi-alarm-check </v-icon> 12:30-16:30
         </v-chip>
       </v-chip-group>
@@ -198,5 +194,9 @@ export default {
 <style>
 #name {
   cursor: pointer;
+}
+.not-active {
+  pointer-events: none;
+  cursor: default;
 }
 </style>

@@ -29,7 +29,7 @@
               <v-list-item two-line>
                 <v-list-item-content>
                   <v-list-item-title class="text-h5 grey--text">
-                    เพิ่มข้อมูลตารางเวรประจำวัน
+                    แก้ไขข้อมูลตารางเวรประจำวัน
                   </v-list-item-title>
                   <v-list-item-subtitle>อุบัติเหตุฉุกเฉิน</v-list-item-subtitle>
                 </v-list-item-content>
@@ -82,17 +82,19 @@
                   </v-menu>
                 </v-col>
                 <v-col cols="12" ml-100>
-                  <v-text-field
-                    label="แผนก"
+                  <v-autocomplete
                     prepend-icon="mdi-office-building"
+                    :items="departments"
+                    v-model="department"
+                    item-text="name"
+                    item-value="name"
+                    label="แผนก"
+                    dense
                     filled
                     rounded
-                    dense
-                    readonly
                     outlined
-                    v-model="er"
                     color="#069A8E"
-                  ></v-text-field>
+                  ></v-autocomplete>
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
@@ -202,7 +204,8 @@ export default {
     return {
       uhid: '',
       datestart: '',
-      er: 'ER',
+      department: 'ER',
+      departments: '',
       doctors: '',
       doctor: '',
       doctor_name: '',
@@ -249,13 +252,6 @@ export default {
       }
     },
     edit_schedule() {
-      //alert(this.uhid)
-      // alert(this.datestart)
-      // alert(this.er)
-      // alert(this.doctor)
-      // alert(this.doctor_level)
-      // alert(this.shift)
-      // alert(this.time)
       if (!this.uhid) {
         this.$swal({
           title: 'แจ้งเตือน',
@@ -268,7 +264,7 @@ export default {
           .put(`${this.$axios.defaults.baseURL}schedules_update.php`, {
             uhid: this.uhid,
             datestart: this.datestart,
-            er: this.er,
+            department: this.department,
             doctor: this.doctor,
             doctor_level: this.doctor_level,
             shift: this.shift,
@@ -300,13 +296,14 @@ export default {
     clear_form() {
       this.uhid = ''
       this.datestart = ''
-      this.er = ''
+      this.department = ''
       this.doctor = ''
       this.doctor_level = ''
       this.shift = ''
       this.time = ''
       //refesh after add data
       setInterval(this.$router.go(), 5000)
+      //setInterval(window.location.reload(true), 5000)
     },
     //ลบ ข่อมูล
     delete_schedule() {
