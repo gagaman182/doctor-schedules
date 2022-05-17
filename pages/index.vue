@@ -22,7 +22,7 @@
           tile
         >
           <div
-            class="white-text pa-2 text-h3 animate__animated animate__headShake"
+            class="white-text pa-2 text-h4 animate__animated animate__headShake"
             outlined
             tile
           >
@@ -34,12 +34,9 @@
       <v-card>
         <v-card-title class="text-h4 red--text">
           Emergency Room
-          <v-spacer />
           <v-icon class="text-h3 mb-2 red--text">mdi-car-emergency </v-icon>
-        </v-card-title>
-        <v-divider />
-        <v-card-title>
           <v-spacer />
+
           <div class="pr-2">
             <v-btn class="white--text" x-large color="#F8B400" @click="refresh">
               <v-icon>mdi-refresh-circle </v-icon>
@@ -54,6 +51,8 @@
             <v-icon>mdi-calendar-plus </v-icon>
           </v-btn>
         </v-card-title>
+        <v-divider />
+
         <v-card-text>
           <v-row>
             <v-col cols="12" sm="4"><Morning_shift /></v-col>
@@ -68,13 +67,11 @@
       <v-card>
         <v-card-title class="text-h4 blue--text">
           Other Departments
-          <v-spacer />
+
           <v-icon class="text-h3 mb-2" color="blue"
             >mdi-hospital-building
           </v-icon>
-        </v-card-title>
-        <v-divider />
-        <v-card-title>
+
           <v-spacer />
           <v-btn
             class="white--text"
@@ -85,10 +82,42 @@
             <v-icon>mdi-calendar-plus </v-icon>
           </v-btn>
         </v-card-title>
+        <v-divider />
+
         <v-card-text>
           <v-row>
-            <v-col cols="12" sm="6"><Other_morning /></v-col>
-            <v-col cols="12" sm="6"><Other_night /></v-col>
+            <v-col cols="12" sm="12">
+              <!-- <v-autocomplete
+                :items="departments"
+                v-model="department"
+                item-text="name"
+                item-value="name"
+                label="แผนก"
+                dense
+                rounded
+                outlined
+                color="#069A8E"
+                @change="depart_select()"
+              ></v-autocomplete> -->
+              <v-select
+                :items="departments"
+                v-model="department"
+                item-text="name"
+                item-value="name"
+                label="แผนก"
+                dense
+                rounded
+                outlined
+                color="#069A8E"
+                @change="depart_select()"
+              ></v-select>
+            </v-col>
+            <v-col cols="12" sm="6"
+              ><Other_morning :department="department" ref="usedepartin"
+            /></v-col>
+            <v-col cols="12" sm="6"
+              ><Other_night :department="department" ref="usedepartout"
+            /></v-col>
           </v-row>
         </v-card-text>
         <v-card-actions>
@@ -108,6 +137,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import 'animate.css'
 import Morning_shift from '~/components/Morning_shift.vue'
 import Afternoon_shift from '~/components/Afternoon_shift.vue'
@@ -128,6 +158,10 @@ export default {
       }),
       dialog_er: false,
       dialog_dp: false,
+      departments: '',
+      department: '',
+      department_select: '',
+      depart: true,
     }
   },
   components: {
@@ -139,7 +173,9 @@ export default {
     Add_schedule_er,
     Add_schedule_department,
   },
-
+  mounted() {
+    this.fecth_department()
+  },
   methods: {
     //er
     open_er_dialog() {
@@ -172,6 +208,21 @@ export default {
     refresh() {
       this.$router.go()
       //this.$nuxt.refresh()
+    },
+    //ดึง department
+    async fecth_department() {
+      await axios
+        .get(`${this.$axios.defaults.baseURL}department.php`)
+        .then((response) => {
+          this.departments = response.data
+        })
+    },
+    depart_select() {
+      // this.department_select = this.department
+      // console.log(this.department)
+
+      this.$refs.usedepartin.fecth_schedule_staff(this.department)
+      this.$refs.usedepartout.fecth_schedule_staff(this.department)
     },
   },
 }

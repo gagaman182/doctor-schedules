@@ -1,8 +1,9 @@
 <template>
-  <v-card :loading="loading" class="mx-auto my-12">
-    <template slot="progress">
+  <v-card>
+    <!-- <v-card :loading="loading" class="mx-auto my-12"> -->
+    <!-- <template slot="progress">
       <v-progress-linear color="deep-purple" indeterminate></v-progress-linear>
-    </template>
+    </template> -->
 
     <!-- <v-card-title class="text-h4 blue--text">เช้า</v-card-title> -->
     <!-- <v-card-text justify="center" align="center">
@@ -13,12 +14,12 @@
       <v-toolbar-title>นอกเวลา</v-toolbar-title>
     </v-toolbar>
 
-    <div v-for="sc in schedule_outtime" :key="sc.uhid">
+    <div v-if="display" v-for="sc in schedule_outtime" :key="sc.uhid">
       <v-card-title
         >{{ sc.department }}
-        <v-row align="center" class="mx-0">
+        <!-- <v-row align="center" class="mx-0">
           <div class="grey--text ms-4">Department</div>
-        </v-row>
+        </v-row> -->
         <v-spacer />
         <v-icon class="text-h4" color="#FF6FB5"
           >mdi-doctor
@@ -61,69 +62,90 @@
           >
         </v-chip-group>
       </v-card-text>
-      <v-divider class="mx-4"></v-divider>
+    </div>
+    <div>
+      <Edit_schedule_department
+        v-if="dialog_dp"
+        :dialog_dp="dialog_dp"
+        :uhid_edit="uhid"
+        :schedule_staff_id="schedule_staff_id"
+        @closedialog_dp="close_dp_dialog"
+      />
     </div>
   </v-card>
 </template>
 <script>
 import axios from 'axios'
-import Edit_schedule_er from '~/components/Edit_schedule_er.vue'
+import Edit_schedule_department from '~/components/Edit_schedule_department.vue'
 
 export default {
   data() {
     return {
       schedule_outtime: '',
       display: false,
-      dialog_er: false,
+      dialog_dp: false,
       hidetime: false,
       uhid: '',
       schedule_staff_id: '',
+      department_all: 'all',
+      department_use: '',
     }
   },
   components: {
-    Edit_schedule_er,
+    Edit_schedule_department,
   },
   mounted() {
+    this.department
     this.fecth_schedule_staff()
   },
   methods: {
     // ดึง schedule
-    async fecth_schedule_staff() {
+    async fecth_schedule_staff(depeartment_select) {
+      if (!depeartment_select) {
+        this.department_use = this.department_all
+      } else {
+        this.department_use = depeartment_select
+      }
       await axios
-        .get(
-          `${this.$axios.defaults.baseURL}intime/schedules_select_outtime.php`
+        // .get(
+        //   `${this.$axios.defaults.baseURL}intime/schedules_select_outtime.php`
+        // )
+        .post(
+          `${this.$axios.defaults.baseURL}intime/schedules_select_outtime.php`,
+          {
+            department: this.department_use,
+          }
         )
         .then((response) => {
           this.schedule_outtime = response.data
 
-          if (this.schedule_staff.length > 0) {
+          if (this.schedule_outtime.length > 0) {
             this.display = true
           } else {
             this.display = false
           }
         })
     },
-
-    edit_schedule(uhid) {
+    async edit_schedule(uhid) {
       this.uhid = uhid
-      alert(this.uhid)
-      // await axios
-      //   .post(`${this.$axios.defaults.baseURL}schedules_select_id.php`, {
-      //     uhid: this.uhid,
-      //   })
-      //   .then((response) => {
-      //     this.schedule_staff_id = response.data
-      //     if (this.dialog_er == true) {
-      //       this.dialog_er = false
-      //       this.dialog_er = true
-      //     } else {
-      //       this.dialog_er = true
-      //     }
-      //   })
+      // alert(this.uhid)
+      await axios
+        .post(`${this.$axios.defaults.baseURL}schedules_select_id.php`, {
+          uhid: this.uhid,
+        })
+        .then((response) => {
+          this.schedule_staff_id = response.data
+          if (this.dialog_dp == true) {
+            this.dialog_dp = false
+            this.dialog_dp = true
+          } else {
+            this.dialog_dp = true
+          }
+        })
     },
     //ส่งค่า false กลับมา
-    close_er_dialog(er) {
-      this.dialog_er = er
+    close_dp_dialog(dp) {
+      this.dialog_dp = dp
     },
   },
 }

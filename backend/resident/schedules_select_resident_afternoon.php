@@ -28,7 +28,7 @@ WHERE
 	'%Y-%m-%d')
   and schedules.doctor_level = 1
   and schedules.shift = 1
-  and schedules.department = '1'
+  and schedules.department = 'ER'
      
       ";
 

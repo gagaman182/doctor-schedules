@@ -58,9 +58,10 @@
     </v-app-bar>
 
     <v-main>
-      <v-container>
+      <!-- <v-container>
         <Nuxt />
-      </v-container>
+      </v-container> -->
+      <Nuxt />
     </v-main>
     <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
       <v-list>
@@ -115,6 +116,7 @@ export default {
 </script>
 </script>
 <style>
+/* google font */
 #app {
   font-family: 'Trirong', serif;
 }

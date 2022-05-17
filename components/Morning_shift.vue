@@ -19,7 +19,11 @@
         </v-icon></v-card-title
       >
 
-      <v-card-text v-for="sc in schedule_staff" :key="sc.uhid">
+      <v-card-text
+        v-if="display_staff"
+        v-for="sc in schedule_staff"
+        :key="sc.uhid"
+      >
         <div
           id="name"
           class="text-h6 blue--text"
@@ -59,7 +63,11 @@
       <v-spacer />
       <v-icon class="text-h4" color="#40DFEF">mdi-doctor </v-icon></v-card-title
     >
-    <v-card-text v-for="sc in schedule_resident" :key="sc.uhid">
+    <v-card-text
+      v-if="display_resident"
+      v-for="sc in schedule_resident"
+      :key="sc.uhid"
+    >
       <div id="name" class="text-h6 blue--text" @click="edit_schedule(sc.uhid)">
         {{ sc.doctor_name }}
       </div>
@@ -82,7 +90,11 @@
       <v-spacer />
       <v-icon class="text-h4" color="#9FB4FF">mdi-doctor </v-icon></v-card-title
     >
-    <v-card-text v-for="sc in schedule_intern" :key="sc.uhid">
+    <v-card-text
+      v-if="display_intern"
+      v-for="sc in schedule_intern"
+      :key="sc.uhid"
+    >
       <div id="name" class="text-h6 blue--text" @click="edit_schedule(sc.uhid)">
         {{ sc.doctor_name }}
       </div>
@@ -117,7 +129,9 @@ export default {
       schedule_staff: '',
       schedule_resident: '',
       schedule_intern: '',
-      display: false,
+      display_staff: false,
+      display_resident: false,
+      display_intern: false,
       dialog_er: false,
       uhid: '',
       schedule_staff_id: '',
@@ -142,9 +156,9 @@ export default {
           this.schedule_staff = response.data
 
           if (this.schedule_staff.length > 0) {
-            this.display = true
+            this.display_staff = true
           } else {
-            this.display = false
+            this.display_staff = false
           }
         })
     },
@@ -155,6 +169,11 @@ export default {
         )
         .then((response) => {
           this.schedule_resident = response.data
+          if (this.schedule_resident.length > 0) {
+            this.display_resident = true
+          } else {
+            this.display_resident = false
+          }
         })
     },
     async fecth_schedule_intern() {
@@ -164,6 +183,11 @@ export default {
         )
         .then((response) => {
           this.schedule_intern = response.data
+          if (this.schedule_intern.length > 0) {
+            this.display_intern = true
+          } else {
+            this.display_intern = false
+          }
         })
     },
     async edit_schedule(uhid) {
