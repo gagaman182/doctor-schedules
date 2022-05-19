@@ -16,9 +16,7 @@
     <div v-if="display" v-for="sc in schedule_intime" :key="sc.uhid">
       <v-card-title>
         {{ sc.department }}
-        <!-- <v-row align="center" class="mx-0">
-          <div class="grey--text ms-4">Department</div>
-        </v-row> -->
+
         <v-spacer />
         <v-icon class="text-h4" color="#FF6FB5"
           >mdi-doctor
@@ -62,6 +60,14 @@
           > -->
         </v-chip-group>
       </v-card-text>
+      <!-- <v-card-title v-for="dp in departments" :key="dp.id">
+        {{ dp.name }}
+    
+        <v-spacer />
+        <v-icon class="text-h4" color="#FF6FB5"
+          >mdi-doctor
+        </v-icon></v-card-title
+      > -->
     </div>
     <div>
       <Edit_schedule_department
@@ -89,6 +95,7 @@ export default {
       schedule_staff_id: '',
       department_all: 'all',
       department_use: '',
+      departments: '',
     }
   },
   components: {
@@ -98,6 +105,7 @@ export default {
   mounted() {
     this.department
     this.fecth_schedule_staff()
+    this.fecth_department()
   },
 
   methods: {
@@ -149,6 +157,14 @@ export default {
     //ส่งค่า false กลับมา
     close_dp_dialog(dp) {
       this.dialog_dp = dp
+    },
+    //ดึง department
+    async fecth_department() {
+      await axios
+        .get(`${this.$axios.defaults.baseURL}department.php`)
+        .then((response) => {
+          this.departments = response.data
+        })
     },
   },
 }

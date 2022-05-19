@@ -37,7 +37,7 @@
 
               <v-row>
                 <v-col>
-                  <v-menu
+                  <!-- <v-menu
                     ref="menu"
                     v-model="menu"
                     :close-on-content-click="false"
@@ -76,6 +76,35 @@
                         color="#069A8E"
                         @click="$refs.menu.save(datestart)"
                       >
+                        ตกลง
+                      </v-btn>
+                    </v-date-picker>
+                  </v-menu> -->
+                  <v-menu
+                    v-model="menu"
+                    :close-on-content-click="false"
+                    max-width="290"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        solo
+                        :value="computedDateFormattedMomentjs"
+                        clearable
+                        outlined
+                        dense
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                        @click:clear="datestart = null"
+                      ></v-text-field>
+                      <!-- clearable ปุ่ม กากบาท -->
+                    </template>
+                    <v-date-picker locale="th-TH" v-model="datestart">
+                      <!-- @change="menu = false" กรณีไม่ใช้ปุ่มกด ใส่ใน v-date-picker -->
+                      <v-spacer></v-spacer>
+
+                      <v-btn text color="#069A8E" @click="menu = false">
                         ตกลง
                       </v-btn>
                     </v-date-picker>
@@ -197,11 +226,13 @@
 </template>
 <script>
 import axios from 'axios'
-
+import moment from 'moment'
+import { format, parseISO } from 'date-fns'
 export default {
   props: ['dialog_er', 'uhid_edit', 'schedule_staff_id'],
   data() {
     return {
+      menu: false,
       uhid: '',
       datestart: '',
       department: 'ER',
@@ -215,6 +246,17 @@ export default {
       message: '',
     }
   },
+  computed: {
+    computedDateFormattedMomentjs() {
+      return this.datestart
+        ? moment(this.datestart).locale('th').format('LL')
+        : ''
+    },
+
+    // computedDateFormattedDatefns() {
+    //   return this.date ? format(parseISO(this.date), 'EEEE, MMMM do yyyy') : ''
+    // },
+  },
   mounted() {
     this.fecth_doctor()
     this.uhid = this.schedule_staff_id[0].uhid
@@ -224,12 +266,22 @@ export default {
     this.doctor_level = this.schedule_staff_id[0].doctor_level
     this.shift = this.schedule_staff_id[0].shift
     this.time = this.schedule_staff_id[0].time4
+    this.fecth_department()
   },
 
   methods: {
+    //ดึง department
+    async fecth_department() {
+      await axios
+        .get(`${this.$axios.defaults.baseURL}department.php`)
+        .then((response) => {
+          this.departments = response.data
+        })
+    },
     close_er_dialog(event) {
       this.dialog_er = false
       this.$emit('closedialog_er', this.dialog_er)
+      this.$forceUpdate()
     },
     // ดึง doctor
     async fecth_doctor() {
@@ -252,6 +304,8 @@ export default {
       }
     },
     edit_schedule() {
+      this.$emit('rerender', 'rerender edit')
+
       if (!this.uhid) {
         this.$swal({
           title: 'แจ้งเตือน',
@@ -302,7 +356,8 @@ export default {
       this.shift = ''
       this.time = ''
       //refesh after add data
-      setInterval(this.$router.go(), 5000)
+      this.$forceUpdate()
+      //setInterval(this.$router.go(), 5000)
       //setInterval(window.location.reload(true), 5000)
     },
     //ลบ ข่อมูล

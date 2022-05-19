@@ -37,7 +37,7 @@
 
               <v-row>
                 <v-col>
-                  <v-menu
+                  <!-- <v-menu
                     ref="menu"
                     v-model="menu"
                     :close-on-content-click="false"
@@ -76,6 +76,35 @@
                         color="#069A8E"
                         @click="$refs.menu.save(datestart)"
                       >
+                        ตกลง
+                      </v-btn>
+                    </v-date-picker>
+                  </v-menu> -->
+                  <v-menu
+                    v-model="menu"
+                    :close-on-content-click="false"
+                    max-width="290"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        solo
+                        :value="computedDateFormattedMomentjs"
+                        clearable
+                        outlined
+                        dense
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                        @click:clear="datestart = null"
+                      ></v-text-field>
+                      <!-- clearable ปุ่ม กากบาท -->
+                    </template>
+                    <v-date-picker locale="th-TH" v-model="datestart">
+                      <!-- @change="menu = false" กรณีไม่ใช้ปุ่มกด ใส่ใน v-date-picker -->
+                      <v-spacer></v-spacer>
+
+                      <v-btn text color="#069A8E" @click="menu = false">
                         ตกลง
                       </v-btn>
                     </v-date-picker>
@@ -190,13 +219,17 @@
 </template>
 <script>
 import axios from 'axios'
-
+import moment from 'moment'
+import { format, parseISO } from 'date-fns'
 export default {
   props: ['dialog_er'],
   data() {
     return {
+      menu: false,
       uhid: '',
-      datestart: new Date().toISOString().substr(0, 10),
+      // datestart: new Date().toISOString().substr(0, 10),
+      datestart: format(parseISO(new Date().toISOString()), 'yyyy-MM-dd'),
+      datastart_time: '',
       department: 'ER',
       departments: '',
       doctors: '',
@@ -205,7 +238,20 @@ export default {
       shift: '',
       time: '',
       message: '',
+      time_plus: '',
+      datastart_time: '',
     }
+  },
+  computed: {
+    computedDateFormattedMomentjs() {
+      return this.datestart
+        ? moment(this.datestart).locale('th').format('LL')
+        : ''
+    },
+
+    // computedDateFormattedDatefns() {
+    //   return this.date ? format(parseISO(this.date), 'EEEE, MMMM do yyyy') : ''
+    // },
   },
   mounted() {
     this.fecth_doctor()
@@ -237,10 +283,20 @@ export default {
     shift_add() {
       if (this.shift == '0') {
         this.time = [0, 1]
+        // this.time_plus = '08:31:00'
+        // this.datastart_time = this.datestart + ' ' + this.time_plus
+
+        // alert(new Date().toJSON())
       } else if (this.shift == '1') {
         this.time = [2, 3]
+        // this.time_plus = '16:30:00'
+        // this.datastart_time = this.datestart + ' ' + this.time_plus
+
+        // alert(dd)
       } else if (this.shift == '2') {
         this.time = [4]
+        // this.time_plus = '23:59:00'
+        // this.datastart_time = this.datestart + ' ' + this.time_plus
       } else {
         this.time = ''
       }
@@ -283,6 +339,7 @@ export default {
                 icon: 'success',
                 confirmButtonText: 'ตกลง',
               })
+
               this.clear_form()
               this.close_er_dialog()
             } else {
@@ -298,14 +355,15 @@ export default {
     },
     clear_form() {
       this.uhid = ''
-      this.datestart = ''
-      this.department = ''
+      this.datestart = format(parseISO(new Date().toISOString()), 'yyyy-MM-dd')
+      this.department = 'ER'
       this.doctor = ''
       this.doctor_level = ''
       this.shift = ''
       this.time = ''
-      //refesh after add data
-      setInterval(this.$router.go(), 5000)
+      // //refesh after add data
+      // setInterval(this.$router.go(), 5000)
+      // this.$forceUpdate()
       //setInterval(window.location.reload(true), 5000)
     },
   },

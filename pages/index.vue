@@ -1,8 +1,37 @@
 <template>
-  <v-row justify="center" align="center">
+  <v-row>
     <v-col cols="12">
-      <div class="justify-center mb-6">
-        <!-- <v-alert border="left" colored-border color="#7CB342" elevation="2">
+      <v-layout class="justify-center">
+        <v-flex xs12>
+          <v-card color="white">
+            <v-alert
+              color="#39AEA9"
+              dark
+              icon="mdi-clipboard-text-clock "
+              border="left"
+              prominent
+              elevation="2"
+              outlined
+              tile
+            >
+              <div
+                class="
+                  white-text
+                  pa-2
+                  text-h4
+                  animate__animated animate__headShake
+                "
+                outlined
+                tile
+              >
+                {{ opddate_now }}
+              </div>
+            </v-alert>
+          </v-card>
+        </v-flex>
+      </v-layout>
+
+      <!-- <v-alert border="left" colored-border color="#7CB342" elevation="2">
           <div
             class="white-text pa-2 text-h4 animate__animated animate__headShake"
             outlined
@@ -11,32 +40,44 @@
             {{ opddate_now }}
           </div>
         </v-alert> -->
-        <v-alert
-          color="#39AEA9"
-          dark
-          icon="mdi-clipboard-text-clock "
-          border="left"
-          prominent
-          elevation="2"
-          outlined
-          tile
-        >
-          <div
-            class="white-text pa-2 text-h4 animate__animated animate__headShake"
-            outlined
-            tile
-          >
-            {{ opddate_now }}
-          </div>
-        </v-alert>
-      </div>
 
       <v-card>
         <v-card-title class="text-h4 red--text">
           Emergency Room
           <v-icon class="text-h3 mb-2 red--text">mdi-car-emergency </v-icon>
           <v-spacer />
+          <div class="pr-2 mt-7">
+            <v-menu
+              v-model="menu"
+              :close-on-content-click="false"
+              max-width="290"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  solo
+                  :value="computedDateFormattedMomentjs"
+                  outlined
+                  dense
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+                <!-- @click:clear="datestart = null" -->
+                <!-- clearable ปุ่ม กากบาท -->
+              </template>
+              <v-date-picker
+                locale="th-TH"
+                v-model="datestart"
+                @change="date_select()"
+              >
+                <!-- @change="menu = false" กรณีไม่ใช้ปุ่มกด ใส่ใน v-date-picker -->
+                <v-spacer></v-spacer>
 
+                <!-- <v-btn text color="#069A8E" @click="menu = false"> ตกลง </v-btn> -->
+              </v-date-picker>
+            </v-menu>
+          </div>
           <div class="pr-2">
             <v-btn class="white--text" x-large color="#F8B400" @click="refresh">
               <v-icon>mdi-refresh-circle </v-icon>
@@ -55,9 +96,27 @@
 
         <v-card-text>
           <v-row>
-            <v-col cols="12" sm="4"><Morning_shift /></v-col>
-            <v-col cols="12" sm="4"><Afternoon_shift /></v-col>
-            <v-col cols="12" sm="4"><Night_shirt /></v-col>
+            <v-col cols="12" sm="4"
+              ><Morning_shift
+                :datestart="datestart"
+                ref="datechange_morning"
+                v-if="renderComponent"
+                @rerenderparent="reredereditparent"
+            /></v-col>
+            <v-col cols="12" sm="4"
+              ><Afternoon_shift
+                :datestart="datestart"
+                ref="datechange_afternoon"
+                v-if="renderComponent"
+                @rerenderparent="reredereditparent"
+            /></v-col>
+            <v-col cols="12" sm="4"
+              ><Night_shirt
+                :datestart="datestart"
+                ref="datechange_night"
+                v-if="renderComponent"
+                @rerenderparent="reredereditparent"
+            /></v-col>
           </v-row>
         </v-card-text>
         <v-card-actions>
@@ -146,23 +205,40 @@ import Other_morning from '~/components/Other_morning.vue'
 import Other_night from '~/components/Other_night.vue'
 import Add_schedule_er from '~/components/Add_schedule_er.vue'
 import Add_schedule_department from '~/components/Add_schedule_department.vue'
+import moment from 'moment'
+import { format, parseISO } from 'date-fns'
 export default {
   name: 'IndexPage',
   data() {
     return {
-      opddate_now: new Date().toLocaleDateString('th-TH', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        weekday: 'long',
-      }),
+      menu: false,
+      datestart: format(parseISO(new Date().toISOString()), 'yyyy-MM-dd'),
+      // opddate_now: new Date().toLocaleDateString('th-TH', {
+      //   year: 'numeric',
+      //   month: 'long',
+      //   day: 'numeric',
+      //   weekday: 'long',
+      // }),
       dialog_er: false,
       dialog_dp: false,
       departments: '',
       department: '',
       department_select: '',
       depart: true,
+      renderComponent: true,
     }
+  },
+  computed: {
+    computedDateFormattedMomentjs() {
+      return this.datestart
+        ? moment(this.datestart).locale('th').format('LL')
+        : ''
+    },
+    opddate_now() {
+      return this.datestart
+        ? moment(this.datestart).locale('th').format('dddd LL')
+        : ''
+    },
   },
   components: {
     Morning_shift,
@@ -177,6 +253,18 @@ export default {
     this.fecth_department()
   },
   methods: {
+    reredereditparent() {
+      this.forceRerender()
+    },
+    forceRerender() {
+      // Removing my-component from the DOM
+      this.renderComponent = false
+
+      this.$nextTick(() => {
+        // Adding the component back in
+        this.renderComponent = true
+      })
+    },
     //er
     open_er_dialog() {
       if (this.dialog_er == true) {
@@ -189,6 +277,8 @@ export default {
     //ส่งค่า false กลับมา
     close_er_dialog(er) {
       this.dialog_er = er
+      this.forceRerender()
+      // this.$forceUpdate()
       // this.$nuxt.refresh()
       // setInterval(this.$router.go(), 5000)
     },
@@ -206,7 +296,9 @@ export default {
       this.dialog_dp = dp
     },
     refresh() {
-      this.$router.go()
+      // this.$forceUpdate()
+      this.forceRerender()
+      // this.$router.go()
       //this.$nuxt.refresh()
     },
     //ดึง department
@@ -223,6 +315,14 @@ export default {
 
       this.$refs.usedepartin.fecth_schedule_staff(this.department)
       this.$refs.usedepartout.fecth_schedule_staff(this.department)
+    },
+    date_select() {
+      this.$refs.datechange_morning.fecth_schedule_staff(this.datestart)
+      this.$refs.datechange_afternoon.fecth_schedule_staff(this.datestart)
+      this.$refs.datechange_night.fecth_schedule_staff(this.datest)
+      // this.$forceUpdate()
+      this.forceRerender()
+      this.menu = false
     },
   },
 }

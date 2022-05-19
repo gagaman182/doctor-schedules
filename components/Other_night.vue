@@ -89,6 +89,7 @@ export default {
       schedule_staff_id: '',
       department_all: 'all',
       department_use: '',
+      departments: '',
     }
   },
   components: {
@@ -146,6 +147,14 @@ export default {
     //ส่งค่า false กลับมา
     close_dp_dialog(dp) {
       this.dialog_dp = dp
+    },
+    //ดึง department
+    async fecth_department() {
+      await axios
+        .get(`${this.$axios.defaults.baseURL}department.php`)
+        .then((response) => {
+          this.departments = response.data
+        })
     },
   },
 }

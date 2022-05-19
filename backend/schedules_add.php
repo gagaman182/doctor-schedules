@@ -13,16 +13,30 @@ $shift = $data['shift'];
 $time = $data['time'];
 
 
-
+// $s = $datestart + ' 19:00:02';
+// $date = strtotime($s);
+// echo date('d/M/Y H:i:s', $date);
 
 include 'conn.php';
 
+
+
 if (!empty($uhid)) {
 
+  if ($shift == '0') {
+    $dateplus = $datestart;
+    $strvisit  = "  INSERT INTO schedules(uhid,datestart,department,doctor,doctor_level,shift,time,dateadd) 
+      VALUES('" . $uhid . "',	DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 08:31:00'),'" . $department . "','" . $doctor . "','" . $doctor_level . "','" . $shift . "','" . $time . "',CURRENT_TIMESTAMP)";
+  } else if ($shift == '1') {
+    $dateplus = $datestart;
+    $strvisit  = "  INSERT INTO schedules(uhid,datestart,department,doctor,doctor_level,shift,time,dateadd) 
+      VALUES('" . $uhid . "',	DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 16:30:00'),'" . $department . "','" . $doctor . "','" . $doctor_level . "','" . $shift . "','" . $time . "',CURRENT_TIMESTAMP)";
+  } else if ($shift == '2') {
+    $dateplus = date('Y-m-d', strtotime($datestart . ' + 1 days'));
+    $strvisit  = "  INSERT INTO schedules(uhid,datestart,department,doctor,doctor_level,shift,time,dateadd) 
+      VALUES('" . $uhid . "',	DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 08:30:00'),'" . $department . "','" . $doctor . "','" . $doctor_level . "','" . $shift . "','" . $time . "',CURRENT_TIMESTAMP)";
+  }
 
-
-  $strvisit  = "  INSERT INTO schedules(uhid,datestart,department,doctor,doctor_level,shift,time,dateadd) 
-      VALUES('" . $uhid . "','" . $datestart . "','" . $department . "','" . $doctor . "','" . $doctor_level . "','" . $shift . "','" . $time . "',CURRENT_TIMESTAMP)";
 
 
   if ($conn->query($strvisit) === TRUE) {

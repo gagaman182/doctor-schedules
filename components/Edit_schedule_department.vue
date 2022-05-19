@@ -36,7 +36,7 @@
 
               <v-row>
                 <v-col>
-                  <v-menu
+                  <!-- <v-menu
                     ref="menu"
                     v-model="menu"
                     :close-on-content-click="false"
@@ -75,6 +75,35 @@
                         color="#069A8E"
                         @click="$refs.menu.save(datestart)"
                       >
+                        ตกลง
+                      </v-btn>
+                    </v-date-picker>
+                  </v-menu> -->
+                  <v-menu
+                    v-model="menu"
+                    :close-on-content-click="false"
+                    max-width="290"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        solo
+                        :value="computedDateFormattedMomentjs"
+                        clearable
+                        outlined
+                        dense
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                        @click:clear="datestart = null"
+                      ></v-text-field>
+                      <!-- clearable ปุ่ม กากบาท -->
+                    </template>
+                    <v-date-picker locale="th-TH" v-model="datestart">
+                      <!-- @change="menu = false" กรณีไม่ใช้ปุ่มกด ใส่ใน v-date-picker -->
+                      <v-spacer></v-spacer>
+
+                      <v-btn text color="#069A8E" @click="menu = false">
                         ตกลง
                       </v-btn>
                     </v-date-picker>
@@ -176,7 +205,14 @@
                 color="#069A8E"
                 @click="edit_schedule"
                 class="white--text text-h6"
-                >เพิ่ม</v-btn
+                >แก้ไข</v-btn
+              >
+              <v-btn
+                x-large
+                color="#F8B400"
+                @click="delete_schedule"
+                class="white--text text-h6"
+                >ลบ</v-btn
               >
 
               <v-btn
@@ -195,10 +231,13 @@
 </template>
 <script>
 import axios from 'axios'
+import moment from 'moment'
+import { format, parseISO } from 'date-fns'
 export default {
   props: ['dialog_dp', 'uhid_edit', 'schedule_staff_id'],
   data() {
     return {
+      menu: false,
       uhid: '',
       datestart: '',
       department: '',
@@ -212,6 +251,17 @@ export default {
       message: '',
     }
   },
+  computed: {
+    computedDateFormattedMomentjs() {
+      return this.datestart
+        ? moment(this.datestart).locale('th').format('LL')
+        : ''
+    },
+
+    // computedDateFormattedDatefns() {
+    //   return this.date ? format(parseISO(this.date), 'EEEE, MMMM do yyyy') : ''
+    // },
+  },
   mounted() {
     this.fecth_doctor()
     this.fecth_department()
@@ -223,8 +273,17 @@ export default {
     this.doctor_level = this.schedule_staff_id[0].doctor_level
     this.shift = this.schedule_staff_id[0].shift
     this.time = this.schedule_staff_id[0].time4
+    this.fecth_department()
   },
   methods: {
+    //ดึง department
+    async fecth_department() {
+      await axios
+        .get(`${this.$axios.defaults.baseURL}department.php`)
+        .then((response) => {
+          this.departments = response.data
+        })
+    },
     close_dp_dialog(event) {
       this.dialog_dp = false
       this.$emit('closedialog_dp', this.dialog_dp)
@@ -288,7 +347,7 @@ export default {
                 confirmButtonText: 'ตกลง',
               })
               this.clear_form()
-              this.close_er_dialog()
+              this.close_dp_dialog()
             } else {
               this.$swal({
                 title: 'สถานะการเพิ่ม',
@@ -298,6 +357,57 @@ export default {
               })
             }
           })
+      }
+    },
+    //ลบ ข่อมูล
+    delete_schedule() {
+      //if (!this.epidem_report_quid) {
+      if (!this.uhid) {
+        this.$swal({
+          title: 'แจ้งเตือน',
+          text: 'ไม่พบลำดับการลบข้อมูล',
+          icon: 'error',
+          confirmButtonText: 'ตกลง',
+        })
+      } else {
+        this.$swal({
+          title: 'คุณแน่ใจว่าต้องการลบข้อมูลนี้?',
+          text: 'แพทย์ ' + this.doctor_name + ' เวรวันที่ ' + this.datestart,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#51adcf',
+          cancelButtonColor: '#686d76',
+          confirmButtonText: 'ลบ',
+          cancelButtonText: 'ยกเลิก',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            axios
+              .put(`${this.$axios.defaults.baseURL}schedules_delete.php`, {
+                uhid: this.uhid,
+              })
+              .then((response) => {
+                this.message = response.data
+
+                if (this.message[0].message === 'ลบข้อมูลสำเร็จ') {
+                  this.$swal({
+                    title: 'สถานะการลบ',
+                    text: this.message[0].message,
+                    icon: 'success',
+                    confirmButtonText: 'ตกลง',
+                  })
+                  this.close_dp_dialog()
+                  this.clear_form()
+                } else {
+                  this.$swal({
+                    title: 'สถานะการลบ',
+                    text: this.message[0].message,
+                    icon: 'error',
+                    confirmButtonText: 'ตกลง',
+                  })
+                }
+              })
+          }
+        })
       }
     },
     clear_form() {

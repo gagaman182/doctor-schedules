@@ -6,6 +6,8 @@
     <v-toolbar dark color="#40DFEF " class="white--text text-h6">
       <v-icon class="icons"> mdi-weather-sunset-up </v-icon>
       <v-toolbar-title>เวรเช้า</v-toolbar-title>
+      <v-spacer />
+      {{ showdate_day }}
     </v-toolbar>
     <div>
       <v-card-title
@@ -116,14 +118,17 @@
         :uhid_edit="uhid"
         :schedule_staff_id="schedule_staff_id"
         @closedialog_er="close_er_dialog"
+        @rerender="rerederedit"
     /></v-card-text>
   </v-card>
 </template>
 <script>
 import axios from 'axios'
 import Edit_schedule_er from '~/components/Edit_schedule_er.vue'
-
+import moment from 'moment'
+import { format, parseISO } from 'date-fns'
 export default {
+  props: ['datestart'],
   data() {
     return {
       schedule_staff: '',
@@ -135,7 +140,18 @@ export default {
       dialog_er: false,
       uhid: '',
       schedule_staff_id: '',
+      time_plus: '',
+      datestart_change: '',
+      renderComponent: true,
+      showdate: '',
     }
+  },
+  computed: {
+    showdate_day() {
+      return this.showdate
+        ? moment(this.showdate).locale('th').format('LL')
+        : ''
+    },
   },
   components: {
     Edit_schedule_er,
@@ -146,11 +162,39 @@ export default {
     this.fecth_schedule_intern()
   },
   methods: {
+    rerederedit() {
+      this.$emit('rerenderparent', 'rerender data parent')
+    },
+    forceRerender() {
+      // this.$parent.forceRerender()
+      // // Removing my-component from the DOM
+      // this.renderComponent = false
+      // this.$nextTick(() => {
+      //   // Adding the component back in
+      //   this.renderComponent = true
+      // })
+    },
     // ดึง schedule
-    async fecth_schedule_staff() {
+
+    async fecth_schedule_staff(datechange) {
+      if (!datechange) {
+        this.datestart_change = this.datestart
+        this.showdate = this.datestart
+      } else {
+        this.datestart_change = datechange
+        this.showdate = datechange
+      }
+
       await axios
-        .get(
-          `${this.$axios.defaults.baseURL}staff/schedules_select_staff_morning.php`
+
+        // .get(
+        //   `${this.$axios.defaults.baseURL}staff/schedules_select_staff_morning.php`
+        // )
+        .post(
+          `${this.$axios.defaults.baseURL}staff/schedules_select_staff_morning.php`,
+          {
+            datastart: this.datestart_change,
+          }
         )
         .then((response) => {
           this.schedule_staff = response.data
