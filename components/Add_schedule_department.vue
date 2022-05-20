@@ -334,7 +334,7 @@ export default {
                 confirmButtonText: 'ตกลง',
               })
               this.clear_form()
-              this.close_er_dialog()
+              this.close_dp_dialog()
             } else {
               this.$swal({
                 title: 'สถานะการเพิ่ม',
@@ -348,14 +348,14 @@ export default {
     },
     clear_form() {
       this.uhid = ''
-      this.datestart = ''
+      this.datestart = format(parseISO(new Date().toISOString()), 'yyyy-MM-dd')
       this.er = ''
       this.doctor = ''
       this.doctor_level = ''
       this.shift = ''
       this.time = ''
       //refesh after add data
-      setInterval(this.$router.go(), 5000)
+      //setInterval(this.$router.go(), 5000)
       //setInterval(window.location.reload(true), 5000)
     },
   },

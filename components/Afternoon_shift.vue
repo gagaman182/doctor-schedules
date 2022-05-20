@@ -136,7 +136,7 @@ export default {
       dialog_er: false,
       uhid: '',
       schedule_staff_id: '',
-      time_plus: '',
+
       datestart_change: '',
       renderComponent: true,
       showdate: '',
@@ -191,10 +191,23 @@ export default {
           }
         })
     },
-    async fecth_schedule_resident() {
+    async fecth_schedule_resident(datechange) {
+      if (!datechange) {
+        this.datestart_change = this.datestart
+        this.showdate = this.datestart
+      } else {
+        this.datestart_change = datechange
+        this.showdate = datechange
+      }
       await axios
-        .get(
-          `${this.$axios.defaults.baseURL}resident/schedules_select_resident_afternoon.php`
+        // .get(
+        //   `${this.$axios.defaults.baseURL}resident/schedules_select_resident_afternoon.php`
+        // )
+        .post(
+          `${this.$axios.defaults.baseURL}resident/schedules_select_resident_afternoon.php`,
+          {
+            datastart: this.datestart_change,
+          }
         )
         .then((response) => {
           this.schedule_resident = response.data
@@ -202,8 +215,14 @@ export default {
     },
     async fecth_schedule_intern() {
       await axios
-        .get(
-          `${this.$axios.defaults.baseURL}intern/schedules_select_intern_afternoon.php`
+        // .get(
+        //   `${this.$axios.defaults.baseURL}intern/schedules_select_intern_afternoon.php`
+        // )
+        .post(
+          `${this.$axios.defaults.baseURL}intern/schedules_select_intern_afternoon.php`,
+          {
+            datastart: this.datestart_change,
+          }
         )
         .then((response) => {
           this.schedule_intern = response.data

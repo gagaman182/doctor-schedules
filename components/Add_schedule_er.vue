@@ -238,8 +238,6 @@ export default {
       shift: '',
       time: '',
       message: '',
-      time_plus: '',
-      datastart_time: '',
     }
   },
   computed: {
@@ -283,20 +281,14 @@ export default {
     shift_add() {
       if (this.shift == '0') {
         this.time = [0, 1]
-        // this.time_plus = '08:31:00'
-        // this.datastart_time = this.datestart + ' ' + this.time_plus
 
         // alert(new Date().toJSON())
       } else if (this.shift == '1') {
         this.time = [2, 3]
-        // this.time_plus = '16:30:00'
-        // this.datastart_time = this.datestart + ' ' + this.time_plus
 
         // alert(dd)
       } else if (this.shift == '2') {
         this.time = [4]
-        // this.time_plus = '23:59:00'
-        // this.datastart_time = this.datestart + ' ' + this.time_plus
       } else {
         this.time = ''
       }

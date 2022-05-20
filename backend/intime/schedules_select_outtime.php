@@ -10,6 +10,8 @@ include '../conn.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 $department = $data['department'];
+$datastart = $data['datastart'];
+//$datastart = '2022-05-20';
 
 // $sql = "SELECT doc_code,concat(doc_code,'-',name) as name  from doctor
 if ($department == 'all') {
@@ -30,10 +32,11 @@ LEFT JOIN doctor on schedules.doctor = doctor.doc_code
 LEFT JOIN type_er on schedules.doctor_level = type_er.code
 LEFT JOIN shift on 	schedules.shift = shift.code
 WHERE
-	DATE_FORMAT( datestart, '%Y-%m-%d' ) = DATE_FORMAT(
-	now(),
-	'%Y-%m-%d')
-  -- and schedules.doctor_level = 0
+  	DATE_FORMAT( datestart, '%Y-%m-%d %H:%i:%s' )
+     BETWEEN 		DATE_FORMAT('" . $datastart . "','%Y-%m-%d 08:30:00')
+      and 	DATE_FORMAT(DATE_ADD('" . $datastart . "', INTERVAL 1 DAY),'%Y-%m-%d 08:30:00')
+
+
   and schedules.shift = 1
   and schedules.department <> 'ER'
   order by schedules.dateadd
@@ -57,10 +60,11 @@ LEFT JOIN doctor on schedules.doctor = doctor.doc_code
 LEFT JOIN type_er on schedules.doctor_level = type_er.code
 LEFT JOIN shift on 	schedules.shift = shift.code
 WHERE
-	DATE_FORMAT( datestart, '%Y-%m-%d' ) = DATE_FORMAT(
-	now(),
-	'%Y-%m-%d')
-  -- and schedules.doctor_level = 0
+  	DATE_FORMAT( datestart, '%Y-%m-%d %H:%i:%s' )
+     BETWEEN 		DATE_FORMAT('" . $datastart . "','%Y-%m-%d 08:30:00')
+      and 	DATE_FORMAT(DATE_ADD('" . $datastart . "', INTERVAL 1 DAY),'%Y-%m-%d 08:30:00')
+
+
   and schedules.shift = 1
   and schedules.department = '" . $department . "'
   order by schedules.dateadd

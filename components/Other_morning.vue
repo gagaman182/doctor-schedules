@@ -12,6 +12,8 @@
     <v-toolbar dark color="#396EB0 " class="white--text text-h6">
       <v-icon class="icons"> mdi-weather-sunset-up </v-icon>
       <v-toolbar-title>ในเวลา</v-toolbar-title>
+      <v-spacer />
+      {{ showdate_day }}
     </v-toolbar>
     <div v-if="display" v-for="sc in schedule_intime" :key="sc.uhid">
       <v-card-title>
@@ -76,6 +78,7 @@
         :uhid_edit="uhid"
         :schedule_staff_id="schedule_staff_id"
         @closedialog_dp="close_dp_dialog"
+        @rerender="rerederedit"
       />
     </div>
   </v-card>
@@ -83,9 +86,10 @@
 <script>
 import axios from 'axios'
 import Edit_schedule_department from '~/components/Edit_schedule_department.vue'
-
+import moment from 'moment'
+import { format, parseISO } from 'date-fns'
 export default {
-  props: ['department'],
+  props: ['datestart'],
   data() {
     return {
       schedule_intime: '',
@@ -96,26 +100,55 @@ export default {
       department_all: 'all',
       department_use: '',
       departments: '',
+
+      datestart_change: '',
+      renderComponent: true,
+      showdate: '',
     }
+  },
+  computed: {
+    showdate_day() {
+      return this.showdate
+        ? moment(this.showdate).locale('th').format('LL')
+        : ''
+    },
   },
   components: {
     Edit_schedule_department,
   },
 
   mounted() {
-    this.department
     this.fecth_schedule_staff()
     this.fecth_department()
   },
 
   methods: {
+    rerederedit() {
+      this.$emit('rerenderparent', 'rerender data parent')
+    },
+    forceRerender() {
+      // this.$parent.forceRerender()
+      // // Removing my-component from the DOM
+      // this.renderComponent = false
+      // this.$nextTick(() => {
+      //   // Adding the component back in
+      //   this.renderComponent = true
+      // })
+    },
     // ดึง schedule
-    async fecth_schedule_staff(depeartment_select) {
+    async fecth_schedule_staff(depeartment_select, datechange) {
       // console.log(depeartment_select)
       if (!depeartment_select) {
         this.department_use = this.department_all
       } else {
         this.department_use = depeartment_select
+      }
+      if (!datechange) {
+        this.datestart_change = this.datestart
+        this.showdate = this.datestart
+      } else {
+        this.datestart_change = datechange
+        this.showdate = datechange
       }
       await axios
         // .get(
@@ -125,6 +158,7 @@ export default {
           `${this.$axios.defaults.baseURL}intime/schedules_select_intime.php`,
           {
             department: this.department_use,
+            datastart: this.datestart_change,
           }
         )
         .then((response) => {

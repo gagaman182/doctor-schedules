@@ -304,7 +304,7 @@ export default {
       }
     },
     edit_schedule() {
-      this.$emit('rerender', 'rerender edit')
+      // this.$emit('rerender', 'rerender edit')
 
       if (!this.uhid) {
         this.$swal({
@@ -356,12 +356,14 @@ export default {
       this.shift = ''
       this.time = ''
       //refesh after add data
-      this.$forceUpdate()
+      //this.$forceUpdate()
+      this.$emit('rerender', 'rerender edit')
       //setInterval(this.$router.go(), 5000)
       //setInterval(window.location.reload(true), 5000)
     },
     //ลบ ข่อมูล
     delete_schedule() {
+      // this.$emit('rerender', 'rerender edit')
       //if (!this.epidem_report_quid) {
       if (!this.uhid) {
         this.$swal({

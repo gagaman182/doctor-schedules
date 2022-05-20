@@ -419,7 +419,8 @@ export default {
       this.shift = ''
       this.time = ''
       //refesh after add data
-      setInterval(this.$router.go(), 5000)
+      this.$emit('rerender', 'rerender edit')
+      // setInterval(this.$router.go(), 5000)
       //setInterval(window.location.reload(true), 5000)
     },
   },

@@ -1,7 +1,15 @@
 <?php
+header('Content-Type:application/json');
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: PUT');
+header('Access-Control-Allow-Headers: Acess-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods,Authorization');
+
 
 include '../conn.php';
+
+$data = json_decode(file_get_contents('php://input'), true);
+//$datastart = '2022-05-19';
+$datastart = $data['datastart'];
 
 
 
@@ -23,12 +31,18 @@ LEFT JOIN doctor on schedules.doctor = doctor.doc_code
 LEFT JOIN type_er on schedules.doctor_level = type_er.code
 LEFT JOIN shift on 	schedules.shift = shift.code
 WHERE
-	DATE_FORMAT( datestart, '%Y-%m-%d' ) = DATE_FORMAT(
-	now(),
-	'%Y-%m-%d')
-  and schedules.doctor_level = 1
-  and schedules.shift = 0
+
+  	DATE_FORMAT( datestart, '%Y-%m-%d %H:%i:%s' )
+     BETWEEN 		DATE_FORMAT('" . $datastart . "','%Y-%m-%d 08:31:00')
+      and 	DATE_FORMAT(DATE_ADD('" . $datastart . "', INTERVAL 1 DAY),'%Y-%m-%d 08:30:00')
+
+and schedules.doctor_level = 1
+   and schedules.shift = 0
   and schedules.department = 'ER'
+     
+		 
+
+     
      
       ";
 

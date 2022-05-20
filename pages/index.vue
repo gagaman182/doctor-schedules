@@ -172,10 +172,18 @@
               ></v-select>
             </v-col>
             <v-col cols="12" sm="6"
-              ><Other_morning :department="department" ref="usedepartin"
+              ><Other_morning
+                :datestart="datestart"
+                ref="usedepartin"
+                v-if="renderComponent"
+                @rerenderparent="reredereditparent"
             /></v-col>
             <v-col cols="12" sm="6"
-              ><Other_night :department="department" ref="usedepartout"
+              ><Other_night
+                :datestart="datestart"
+                ref="usedepartout"
+                v-if="renderComponent"
+                @rerenderparent="reredereditparent"
             /></v-col>
           </v-row>
         </v-card-text>
@@ -294,6 +302,7 @@ export default {
     //ส่งค่า false กลับมา
     close_dp_dialog(dp) {
       this.dialog_dp = dp
+      this.forceRerender()
     },
     refresh() {
       // this.$forceUpdate()
@@ -313,13 +322,25 @@ export default {
       // this.department_select = this.department
       // console.log(this.department)
 
-      this.$refs.usedepartin.fecth_schedule_staff(this.department)
-      this.$refs.usedepartout.fecth_schedule_staff(this.department)
+      this.$refs.usedepartin.fecth_schedule_staff(
+        this.department,
+        this.datestart
+      )
+      this.$refs.usedepartout.fecth_schedule_staff(
+        this.department,
+        this.datestart
+      )
     },
     date_select() {
       this.$refs.datechange_morning.fecth_schedule_staff(this.datestart)
+      this.$refs.datechange_morning.fecth_schedule_resident(this.datestart)
+      this.$refs.datechange_morning.fecth_schedule_intern(this.datestart)
       this.$refs.datechange_afternoon.fecth_schedule_staff(this.datestart)
+      this.$refs.datechange_afternoon.fecth_schedule_resident(this.datestart)
+      this.$refs.datechange_afternoon.fecth_schedule_intern(this.datestart)
       this.$refs.datechange_night.fecth_schedule_staff(this.datest)
+      this.$refs.datechange_night.fecth_schedule_resident(this.datestart)
+      this.$refs.datechange_night.fecth_schedule_intern(this.datestart)
       // this.$forceUpdate()
       this.forceRerender()
       this.menu = false

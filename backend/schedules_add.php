@@ -23,20 +23,27 @@ include 'conn.php';
 
 if (!empty($uhid)) {
 
-  if ($shift == '0') {
+  if ($shift == '0' && $department == 'ER') {
     $dateplus = $datestart;
     $strvisit  = "  INSERT INTO schedules(uhid,datestart,department,doctor,doctor_level,shift,time,dateadd) 
       VALUES('" . $uhid . "',	DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 08:31:00'),'" . $department . "','" . $doctor . "','" . $doctor_level . "','" . $shift . "','" . $time . "',CURRENT_TIMESTAMP)";
-  } else if ($shift == '1') {
+  } else if ($shift == '1' && $department == 'ER') {
     $dateplus = $datestart;
     $strvisit  = "  INSERT INTO schedules(uhid,datestart,department,doctor,doctor_level,shift,time,dateadd) 
       VALUES('" . $uhid . "',	DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 16:30:00'),'" . $department . "','" . $doctor . "','" . $doctor_level . "','" . $shift . "','" . $time . "',CURRENT_TIMESTAMP)";
-  } else if ($shift == '2') {
+  } else if ($shift == '2' && $department == 'ER') {
+    $dateplus = date('Y-m-d', strtotime($datestart . ' + 1 days'));
+    $strvisit  = "  INSERT INTO schedules(uhid,datestart,department,doctor,doctor_level,shift,time,dateadd) 
+      VALUES('" . $uhid . "',	DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 08:30:00'),'" . $department . "','" . $doctor . "','" . $doctor_level . "','" . $shift . "','" . $time . "',CURRENT_TIMESTAMP)";
+  } else if ($shift == '0' && $department != 'ER') {
+    $dateplus = $datestart;
+    $strvisit  = "  INSERT INTO schedules(uhid,datestart,department,doctor,doctor_level,shift,time,dateadd) 
+      VALUES('" . $uhid . "',	DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 08:31:00'),'" . $department . "','" . $doctor . "','" . $doctor_level . "','" . $shift . "','" . $time . "',CURRENT_TIMESTAMP)";
+  } else if ($shift == '1' && $department != 'ER') {
     $dateplus = date('Y-m-d', strtotime($datestart . ' + 1 days'));
     $strvisit  = "  INSERT INTO schedules(uhid,datestart,department,doctor,doctor_level,shift,time,dateadd) 
       VALUES('" . $uhid . "',	DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 08:30:00'),'" . $department . "','" . $doctor . "','" . $doctor_level . "','" . $shift . "','" . $time . "',CURRENT_TIMESTAMP)";
   }
-
 
 
   if ($conn->query($strvisit) === TRUE) {
