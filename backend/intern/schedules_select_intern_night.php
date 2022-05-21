@@ -32,8 +32,9 @@ LEFT JOIN type_er on schedules.doctor_level = type_er.code
 LEFT JOIN shift on 	schedules.shift = shift.code
 WHERE
 
+
   	DATE_FORMAT( datestart, '%Y-%m-%d %H:%i:%s' )
-     BETWEEN 		DATE_FORMAT('" . $datastart . "','%Y-%m-%d 08:30:00')
+     BETWEEN 		DATE_FORMAT('" . $datastart . "','%Y-%m-%d 08:31:00')
       and 	DATE_FORMAT(DATE_ADD('" . $datastart . "', INTERVAL 1 DAY),'%Y-%m-%d 08:30:00')
 
 and schedules.doctor_level = 2

@@ -258,6 +258,12 @@ export default {
         : ''
     },
 
+    department_no_er() {
+      const result = this.departments.filter((department) => {
+        return department.name != 'ER'
+      })
+      return result
+    },
     // computedDateFormattedDatefns() {
     //   return this.date ? format(parseISO(this.date), 'EEEE, MMMM do yyyy') : ''
     // },

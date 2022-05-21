@@ -252,12 +252,19 @@ export default {
         ? moment(this.datestart).locale('th').format('LL')
         : ''
     },
+    // department_er() {
+    //   const result = this.departments.filter((department) => {
+    //     return department.name == 'ER'
+    //   })
+    //   return result
+    // },
 
     // computedDateFormattedDatefns() {
     //   return this.date ? format(parseISO(this.date), 'EEEE, MMMM do yyyy') : ''
     // },
   },
   mounted() {
+    this.fecth_department()
     this.fecth_doctor()
     this.uhid = this.schedule_staff_id[0].uhid
     this.datestart = this.schedule_staff_id[0].datestart
@@ -266,7 +273,6 @@ export default {
     this.doctor_level = this.schedule_staff_id[0].doctor_level
     this.shift = this.schedule_staff_id[0].shift
     this.time = this.schedule_staff_id[0].time4
-    this.fecth_department()
   },
 
   methods: {

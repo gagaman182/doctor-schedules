@@ -113,7 +113,7 @@
                 <v-col cols="12" ml-100>
                   <v-autocomplete
                     prepend-icon="mdi-office-building"
-                    :items="departments"
+                    :items="department_er"
                     v-model="department"
                     item-text="name"
                     item-value="name"
@@ -246,11 +246,18 @@ export default {
         ? moment(this.datestart).locale('th').format('LL')
         : ''
     },
+    department_er() {
+      const result = this.departments.filter((department) => {
+        return department.name == 'ER'
+      })
+      return result
+    },
 
     // computedDateFormattedDatefns() {
     //   return this.date ? format(parseISO(this.date), 'EEEE, MMMM do yyyy') : ''
     // },
   },
+
   mounted() {
     this.fecth_doctor()
     this.fecth_department()

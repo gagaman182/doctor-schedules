@@ -12,13 +12,12 @@ $doctor_level = $data['doctor_level'];
 $shift = $data['shift'];
 $time = $data['time'];
 
-
-
-
 include 'conn.php';
-
-$sql = "UPDATE schedules
-SET datestart = '" . $datestart . "',
+//เช้า
+if ($shift == '0' && $department == 'ER') {
+  $dateplus = $datestart;
+  $sql = "UPDATE schedules
+SET datestart = DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 08:31:00'),
 department = '" . $department . "',
 doctor = '" . $doctor . "',
 doctor_level = '" . $doctor_level . "',
@@ -26,6 +25,63 @@ shift = '" . $shift . "',
 time = '" . $time . "',
 dateedit = CURRENT_TIMESTAMP
 WHERE uhid = '" . $uhid . "' ";
+}
+//บ่าย
+else if ($shift == '1' && $department == 'ER') {
+  $dateplus = $datestart;
+  $sql = "UPDATE schedules
+SET datestart = DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 16:30:00'),
+department = '" . $department . "',
+doctor = '" . $doctor . "',
+doctor_level = '" . $doctor_level . "',
+shift = '" . $shift . "',
+time = '" . $time . "',
+dateedit = CURRENT_TIMESTAMP
+WHERE uhid = '" . $uhid . "' ";
+}
+//ดึก
+else if ($shift == '2' && $department == 'ER') {
+  $dateplus = date('Y-m-d', strtotime($datestart . ' + 1 days'));
+  $sql = "UPDATE schedules
+SET datestart = DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 08:30:00'),
+department = '" . $department . "',
+doctor = '" . $doctor . "',
+doctor_level = '" . $doctor_level . "',
+shift = '" . $shift . "',
+time = '" . $time . "',
+dateedit = CURRENT_TIMESTAMP
+WHERE uhid = '" . $uhid . "' ";
+}
+//ในเวลา
+else if ($shift == '0' && $department != 'ER') {
+  $sql = "UPDATE schedules
+SET datestart = DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 08:31:00'),
+department = '" . $department . "',
+doctor = '" . $doctor . "',
+doctor_level = '" . $doctor_level . "',
+shift = '" . $shift . "',
+time = '" . $time . "',
+dateedit = CURRENT_TIMESTAMP
+WHERE uhid = '" . $uhid . "' ";
+}
+//นอกเวลา
+else if ($shift == '1' && $department != 'ER') {
+  $dateplus = date('Y-m-d', strtotime($datestart . ' + 1 days'));
+  $sql = "UPDATE schedules
+SET datestart = DATE_FORMAT('" . $dateplus . "','%Y-%m-%d 08:30:00'),
+department = '" . $department . "',
+doctor = '" . $doctor . "',
+doctor_level = '" . $doctor_level . "',
+shift = '" . $shift . "',
+time = '" . $time . "',
+dateedit = CURRENT_TIMESTAMP
+WHERE uhid = '" . $uhid . "' ";
+}
+
+
+
+
+
 
 
 
