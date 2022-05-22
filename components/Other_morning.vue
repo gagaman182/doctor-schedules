@@ -211,4 +211,7 @@ export default {
   pointer-events: none;
   cursor: default;
 }
+#name:hover {
+  background-color: #f1eee9;
+}
 </style>

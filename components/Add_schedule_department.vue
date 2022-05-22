@@ -3,13 +3,14 @@
     <v-col cols="auto">
       <v-dialog
         transition="dialog-top-transition"
-        max-width="800"
+        max-width="900"
         v-model="dialog_dp"
       >
         <template v-slot:default="dialog_dp">
           <v-card>
-            <v-toolbar color="#069A8E" dark class="text-h5"
-              >Other Departments
+            <v-toolbar color="#069A8E" dark class="text-h5">
+              <!-- Other Departments -->
+              แผนกอื่นๆ
               <v-spacer />
               <v-btn
                 class="mx-2"
@@ -30,7 +31,7 @@
                   <v-list-item-title class="text-h5 grey--text">
                     เพิ่มข้อมูลตารางเวรประจำวัน
                   </v-list-item-title>
-                  <v-list-item-subtitle>แผนกในโรงพยาบาล</v-list-item-subtitle>
+                  <v-list-item-subtitle>Other Departments</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
@@ -355,6 +356,7 @@ export default {
     clear_form() {
       this.uhid = ''
       this.datestart = format(parseISO(new Date().toISOString()), 'yyyy-MM-dd')
+      this.department = ''
       this.er = ''
       this.doctor = ''
       this.doctor_level = ''

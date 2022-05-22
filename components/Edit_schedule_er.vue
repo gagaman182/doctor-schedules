@@ -3,13 +3,14 @@
     <v-col cols="auto">
       <v-dialog
         transition="dialog-top-transition"
-        max-width="800"
+        max-width="900"
         v-model="dialog_er"
       >
         <template v-slot:default="dialog_er">
           <v-card>
             <v-toolbar color="#069A8E" dark class="text-h5">
-              Emergency Room
+              <!-- Emergency Room -->
+              แผนกอุบัติเหตุและฉุกเฉิน
               <v-spacer />
               <v-btn
                 class="mx-2"
@@ -31,7 +32,7 @@
                   <v-list-item-title class="text-h5 grey--text">
                     แก้ไขข้อมูลตารางเวรประจำวัน
                   </v-list-item-title>
-                  <v-list-item-subtitle>อุบัติเหตุฉุกเฉิน</v-list-item-subtitle>
+                  <v-list-item-subtitle>Emergency Room</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
@@ -287,7 +288,6 @@ export default {
     close_er_dialog(event) {
       this.dialog_er = false
       this.$emit('closedialog_er', this.dialog_er)
-      this.$forceUpdate()
     },
     // ดึง doctor
     async fecth_doctor() {

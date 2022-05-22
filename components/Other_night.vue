@@ -66,6 +66,7 @@
         </v-chip-group>
       </v-card-text>
     </div>
+
     <div>
       <Edit_schedule_department
         v-if="dialog_dp"

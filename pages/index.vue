@@ -43,9 +43,18 @@
 
       <v-card>
         <v-card-title class="text-h4 red--text">
-          Emergency Room
+          <!-- Emergency Room -->
+          แผนกอุบัติเหตุและฉุกเฉิน
           <v-icon class="text-h3 mb-2 red--text">mdi-car-emergency </v-icon>
+          <v-switch
+            class="mb-2 pt-5 ml-2"
+            v-model="ershow"
+            :label="ershow_text"
+            inset
+            @change="erchange"
+          ></v-switch>
           <v-spacer />
+
           <div class="pr-2 mt-7">
             <v-menu
               v-model="menu"
@@ -92,9 +101,9 @@
             <v-icon>mdi-calendar-plus </v-icon>
           </v-btn>
         </v-card-title>
-        <v-divider />
+        <!-- <v-divider /> -->
 
-        <v-card-text>
+        <v-card-text v-show="ershow">
           <v-row>
             <v-col cols="12" sm="4" v-if="showdashboard">
               <Morning_shift
@@ -141,19 +150,29 @@
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions>
-          <!-- <v-spacer /> -->
-        </v-card-actions>
       </v-card>
       <v-card>
         <v-card-title class="text-h4 blue--text">
-          Other Departments
+          <!-- Other Departments -->
+          แผนกอื่นๆ
 
           <v-icon class="text-h3 mb-2" color="blue"
             >mdi-hospital-building
           </v-icon>
-
+          <v-switch
+            class="mb-2 pt-5 ml-2"
+            v-model="dpshow"
+            :label="dpshow_text"
+            inset
+            @change="dpchange"
+          ></v-switch>
           <v-spacer />
+          <div class="pr-2">
+            <v-btn class="white--text" x-large color="#F8B400" @click="refresh">
+              <v-icon>mdi-refresh-circle </v-icon>
+            </v-btn>
+          </div>
+
           <v-btn
             class="white--text"
             x-large
@@ -163,9 +182,9 @@
             <v-icon>mdi-calendar-plus </v-icon>
           </v-btn>
         </v-card-title>
-        <v-divider />
+        <!-- <v-divider /> -->
 
-        <v-card-text>
+        <v-card-text v-show="dpshow">
           <v-row>
             <v-col cols="12" sm="12">
               <!-- <v-autocomplete
@@ -180,6 +199,7 @@
                 color="#069A8E"
                 @change="depart_select()"
               ></v-autocomplete> -->
+
               <v-select
                 :items="departments"
                 v-model="department"
@@ -223,9 +243,6 @@
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions>
-          <!-- <v-spacer /> -->
-        </v-card-actions>
       </v-card>
       <Add_schedule_er
         :dialog_er="dialog_er"
@@ -271,6 +288,10 @@ export default {
       department_select: '',
       depart: true,
       renderComponent: true,
+      ershow: true,
+      dpshow: true,
+      ershow_text: 'ซ่อน',
+      dpshow_text: 'ซ่อน',
     }
   },
   computed: {
@@ -298,6 +319,20 @@ export default {
     this.fecth_department()
   },
   methods: {
+    erchange() {
+      if (this.ershow == true) {
+        this.ershow_text = 'ซ่อน'
+      } else if (this.ershow == false) {
+        this.ershow_text = 'แสดง'
+      }
+    },
+    dpchange() {
+      if (this.dpshow == true) {
+        this.dpshow_text = 'ซ่อน'
+      } else if (this.dpshow == false) {
+        this.dpshow_text = 'แสดง'
+      }
+    },
     reredereditparent() {
       this.forceRerender()
     },
@@ -323,7 +358,7 @@ export default {
     close_er_dialog(er) {
       this.dialog_er = er
 
-      this.forceRerender()
+      // this.forceRerender()
 
       // this.$forceUpdate()
       // this.$nuxt.refresh()
@@ -341,7 +376,7 @@ export default {
     //ส่งค่า false กลับมา
     close_dp_dialog(dp) {
       this.dialog_dp = dp
-      this.forceRerender()
+      // this.forceRerender()
     },
     refresh() {
       // this.$forceUpdate()
@@ -353,7 +388,7 @@ export default {
     //ดึง department
     async fecth_department() {
       await axios
-        .get(`${this.$axios.defaults.baseURL}department.php`)
+        .get(`${this.$axios.defaults.baseURL}department_noer.php`)
         .then((response) => {
           this.departments = response.data
           this.showdashboard = true

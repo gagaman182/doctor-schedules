@@ -3,13 +3,14 @@
     <v-col cols="auto">
       <v-dialog
         transition="dialog-top-transition"
-        max-width="800"
+        max-width="900"
         v-model="dialog_er"
       >
         <template v-slot:default="dialog_er">
           <v-card>
             <v-toolbar color="#069A8E" dark class="text-h5">
-              Emergency Room
+              <!-- Emergency Room -->
+              แผนกอุบัติเหตุและฉุกเฉิน
               <v-spacer />
               <v-btn
                 class="mx-2"
@@ -31,7 +32,7 @@
                   <v-list-item-title class="text-h5 grey--text">
                     เพิ่มข้อมูลตารางเวรประจำวัน
                   </v-list-item-title>
-                  <v-list-item-subtitle>อุบัติเหตุฉุกเฉิน</v-list-item-subtitle>
+                  <v-list-item-subtitle>Emergency Room</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
