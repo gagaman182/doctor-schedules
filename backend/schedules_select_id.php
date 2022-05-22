@@ -12,7 +12,9 @@ $uhid = $data['uhid'];
 // $sql = "SELECT doc_code,concat(doc_code,'-',name) as name  from doctor
 $sql = "SELECT
 	schedules.uhid,
-	schedules.datestart,
+		case when 	(schedules.shift = '2' and schedules.department = 'ER') OR
+	(schedules.shift = '1' and schedules.department <> 'ER')
+	then DATE_SUB(schedules.datestart, INTERVAL 1 DAY)  else  schedules.datestart end  as datestart,
 	schedules.department,
 	schedules.doctor,
 	doctor.name as doctor_name,

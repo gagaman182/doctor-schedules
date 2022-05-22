@@ -96,27 +96,49 @@
 
         <v-card-text>
           <v-row>
-            <v-col cols="12" sm="4"
-              ><Morning_shift
+            <v-col cols="12" sm="4" v-if="showdashboard">
+              <Morning_shift
                 :datestart="datestart"
                 ref="datechange_morning"
                 v-if="renderComponent"
                 @rerenderparent="reredereditparent"
             /></v-col>
-            <v-col cols="12" sm="4"
-              ><Afternoon_shift
+            <v-col cols="12" sm="4" v-else>
+              <v-skeleton-loader
+                class="mx-auto"
+                max-width="300"
+                type="card"
+              ></v-skeleton-loader>
+            </v-col>
+            <v-col cols="12" sm="4" v-if="showdashboard">
+              <Afternoon_shift
                 :datestart="datestart"
                 ref="datechange_afternoon"
                 v-if="renderComponent"
                 @rerenderparent="reredereditparent"
-            /></v-col>
-            <v-col cols="12" sm="4"
-              ><Night_shirt
+              />
+            </v-col>
+            <v-col cols="12" sm="4" v-else>
+              <v-skeleton-loader
+                class="mx-auto"
+                max-width="300"
+                type="card"
+              ></v-skeleton-loader>
+            </v-col>
+            <v-col cols="12" sm="4" v-if="showdashboard">
+              <Night_shirt
                 :datestart="datestart"
                 ref="datechange_night"
                 v-if="renderComponent"
                 @rerenderparent="reredereditparent"
             /></v-col>
+            <v-col cols="12" sm="4" v-else>
+              <v-skeleton-loader
+                class="mx-auto"
+                max-width="300"
+                type="card"
+              ></v-skeleton-loader>
+            </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions>
@@ -171,20 +193,34 @@
                 @change="depart_select()"
               ></v-select>
             </v-col>
-            <v-col cols="12" sm="6"
+            <v-col cols="12" sm="6" v-if="showdashboard"
               ><Other_morning
                 :datestart="datestart"
                 ref="usedepartin"
                 v-if="renderComponent"
                 @rerenderparent="reredereditparent"
             /></v-col>
-            <v-col cols="12" sm="6"
+            <v-col cols="12" sm="6" v-else>
+              <v-skeleton-loader
+                class="mx-auto"
+                max-width="300"
+                type="card"
+              ></v-skeleton-loader>
+            </v-col>
+            <v-col cols="12" sm="6" v-if="showdashboard"
               ><Other_night
                 :datestart="datestart"
                 ref="usedepartout"
                 v-if="renderComponent"
                 @rerenderparent="reredereditparent"
             /></v-col>
+            <v-col cols="12" sm="6" v-else>
+              <v-skeleton-loader
+                class="mx-auto"
+                max-width="300"
+                type="card"
+              ></v-skeleton-loader>
+            </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions>
@@ -219,6 +255,7 @@ export default {
   name: 'IndexPage',
   data() {
     return {
+      showdashboard: false,
       menu: false,
       datestart: format(parseISO(new Date().toISOString()), 'yyyy-MM-dd'),
       // opddate_now: new Date().toLocaleDateString('th-TH', {
@@ -285,7 +322,9 @@ export default {
     //ส่งค่า false กลับมา
     close_er_dialog(er) {
       this.dialog_er = er
+
       this.forceRerender()
+
       // this.$forceUpdate()
       // this.$nuxt.refresh()
       // setInterval(this.$router.go(), 5000)
@@ -307,6 +346,7 @@ export default {
     refresh() {
       // this.$forceUpdate()
       this.forceRerender()
+
       // this.$router.go()
       //this.$nuxt.refresh()
     },
@@ -316,6 +356,7 @@ export default {
         .get(`${this.$axios.defaults.baseURL}department.php`)
         .then((response) => {
           this.departments = response.data
+          this.showdashboard = true
         })
     },
     depart_select() {

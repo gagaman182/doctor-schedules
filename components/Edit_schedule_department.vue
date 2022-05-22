@@ -271,6 +271,7 @@ export default {
   mounted() {
     this.fecth_doctor()
     this.fecth_department()
+
     this.uhid = this.schedule_staff_id[0].uhid
     this.datestart = this.schedule_staff_id[0].datestart
     this.department = this.schedule_staff_id[0].department
@@ -279,7 +280,6 @@ export default {
     this.doctor_level = this.schedule_staff_id[0].doctor_level
     this.shift = this.schedule_staff_id[0].shift
     this.time = this.schedule_staff_id[0].time4
-    this.fecth_department()
   },
   methods: {
     //ดึง department
