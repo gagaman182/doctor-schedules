@@ -97,10 +97,15 @@
                         v-bind="attrs"
                         v-on="on"
                         @click:clear="datestart = null"
+                        class="subtitle text-green"
                       ></v-text-field>
                       <!-- clearable ปุ่ม กากบาท -->
                     </template>
-                    <v-date-picker locale="th-TH" v-model="datestart">
+                    <v-date-picker
+                      locale="th-TH"
+                      v-model="datestart"
+                      color="#069A8E"
+                    >
                       <!-- @change="menu = false" กรณีไม่ใช้ปุ่มกด ใส่ใน v-date-picker -->
                       <v-spacer></v-spacer>
 
@@ -123,6 +128,7 @@
                     rounded
                     outlined
                     color="#069A8E"
+                    class="subtitle text-green"
                   ></v-autocomplete>
                 </v-col>
                 <v-col cols="12">
@@ -138,6 +144,7 @@
                     rounded
                     outlined
                     color="#069A8E"
+                    class="subtitle text-green"
                   ></v-autocomplete>
                   <v-divider />
                 </v-col>
@@ -145,19 +152,19 @@
                 <v-col cols="12" sm="7">
                   <h2 class="text-h6 mb-2">แพทย์เวร</h2>
                   <v-chip-group v-model="doctor_level" column color="#069A8E">
-                    <v-chip filter outlined
+                    <v-chip filter outlined class="subtitle text-green"
                       ><v-icon left> mdi-doctor </v-icon> STAFF
                     </v-chip>
-                    <v-chip filter outlined
+                    <v-chip filter outlined class="subtitle text-green"
                       ><v-icon left> mdi-doctor </v-icon> RESIDENT
                     </v-chip>
-                    <v-chip filter outlined
+                    <v-chip filter outlined class="subtitle text-green"
                       ><v-icon left> mdi-doctor </v-icon> INTERN
                     </v-chip>
-                    <v-chip filter outlined
+                    <v-chip filter outlined class="subtitle text-green"
                       ><v-icon left> mdi-doctor </v-icon> รับ REFER
                     </v-chip>
-                    <v-chip filter outlined
+                    <v-chip filter outlined class="subtitle text-green"
                       ><v-icon left> mdi-doctor </v-icon> รับ CONSULT
                     </v-chip>
                   </v-chip-group>
@@ -165,11 +172,20 @@
                 <v-col cols="12" sm="5">
                   <h2 class="text-h6 mb-2">เข้าเวร</h2>
                   <v-chip-group v-model="shift" column color="#069A8E">
-                    <v-chip filter outlined @input="shift_add()">
+                    <v-chip
+                      filter
+                      outlined
+                      @input="shift_add()"
+                      class="subtitle text-green"
+                    >
                       <v-icon left> mdi-weather-sunset-up </v-icon>
                       ในเวลา
                     </v-chip>
-                    <v-chip filter outlined @input="shift_add()"
+                    <v-chip
+                      filter
+                      outlined
+                      @input="shift_add()"
+                      class="subtitle text-green"
                       ><v-icon left> mdi-weather-sunset-down </v-icon> นอกเวลา
                     </v-chip>
                     <!-- <v-chip filter outlined @input="shift_add()"
@@ -181,19 +197,19 @@
                   <v-divider />
                   <h2 class="text-h6 mb-2">ช่วงเวลา</h2>
                   <v-chip-group v-model="time" column color="#069A8E" multiple>
-                    <v-chip filter outlined
+                    <v-chip filter outlined class="subtitle text-green"
                       ><v-icon left> mdi-alarm-check </v-icon> 8:30-12:30
                     </v-chip>
-                    <v-chip filter outlined
+                    <v-chip filter outlined class="subtitle text-green"
                       ><v-icon left> mdi-alarm-check </v-icon> 12:30-16:30
                     </v-chip>
-                    <v-chip filter outlined
+                    <v-chip filter outlined class="subtitle text-green"
                       ><v-icon left> mdi-alarm-check </v-icon> 16:30-20:30
                     </v-chip>
-                    <v-chip filter outlined
+                    <v-chip filter outlined class="subtitle text-green"
                       ><v-icon left> mdi-alarm-check </v-icon>20:30-0:30</v-chip
                     >
-                    <v-chip filter outlined
+                    <v-chip filter outlined class="subtitle text-green"
                       ><v-icon left> mdi-alarm-check </v-icon>0:30-8:30</v-chip
                     >
                   </v-chip-group>
@@ -369,4 +385,9 @@ export default {
   },
 }
 </script>
+<style>
+.text-green {
+  color: #069a8e !important;
+}
+</style>
 

@@ -53,9 +53,16 @@
             inset
             @change="erchange"
           ></v-switch>
-          <div class="ml-4 mt-2 text-h6 blue--text">
-            สถานะผู้ใช้งาน:{{ user }}
-          </div>
+          <!-- <div class="ml-4 mt-2 text-h6 blue--text">
+            ประเภทผู้ใช้งาน:{{ user }}
+          </div> -->
+          <v-row align="center" justify="end">
+            <v-icon class="mr-2"> mdi-account-star </v-icon>
+            <span class="text-h6 blue--text mr-2">ประเภทผู้ใช้งาน</span>
+            <span class="mr-2 blue--text">:</span>
+            <!-- <v-icon class="mr-1"> mdi-account-details-outline </v-icon> -->
+            <span class="text-h5 green--text">{{ user }}</span>
+          </v-row>
           <div class="ml-1" v-show="authenticated">
             <v-tooltip bottom color="red">
               <template v-slot:activator="{ on, attrs }">
@@ -89,6 +96,7 @@
                   readonly
                   v-bind="attrs"
                   v-on="on"
+                  class="text-h6 text-green"
                 ></v-text-field>
                 <!-- @click:clear="datestart = null" -->
                 <!-- clearable ปุ่ม กากบาท -->
@@ -97,6 +105,7 @@
                 locale="th-TH"
                 v-model="datestart"
                 @change="date_select()"
+                color="#069A8E"
               >
                 <!-- @change="menu = false" กรณีไม่ใช้ปุ่มกด ใส่ใน v-date-picker -->
                 <v-spacer></v-spacer>
@@ -497,11 +506,27 @@ export default {
     },
     //er
     open_er_dialog() {
-      if (this.dialog_er == true) {
-        this.dialog_er = false
-        this.dialog_er = true
+      if (this.session == false) {
+        this.$swal({
+          title: 'ท่านไม่มีสิทธิเพิ่มหรือแก้ข้อมูล',
+          icon: 'warning',
+          showCancelButton: true,
+          cancelButtonText: 'ยกเลิก',
+          confirmButtonColor: '#069A8E',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'เข้าสู่ระบบ',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.call_login()
+          }
+        })
       } else {
-        this.dialog_er = true
+        if (this.dialog_er == true) {
+          this.dialog_er = false
+          this.dialog_er = true
+        } else {
+          this.dialog_er = true
+        }
       }
     },
     //ส่งค่า false กลับมา
@@ -516,11 +541,27 @@ export default {
     },
     //dp
     open_dp_dialog() {
-      if (this.dialog_dp == true) {
-        this.dialog_dp = false
-        this.dialog_dp = true
+      if (this.session == false) {
+        this.$swal({
+          title: 'ท่านไม่มีสิทธิเพิ่มหรือแก้ข้อมูล',
+          icon: 'warning',
+          showCancelButton: true,
+          cancelButtonText: 'ยกเลิก',
+          confirmButtonColor: '#069A8E',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'เข้าสู่ระบบ',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.call_login()
+          }
+        })
       } else {
-        this.dialog_dp = true
+        if (this.dialog_dp == true) {
+          this.dialog_dp = false
+          this.dialog_dp = true
+        } else {
+          this.dialog_dp = true
+        }
       }
     },
     //ส่งค่า false กลับมา
@@ -621,6 +662,21 @@ export default {
         confirmButtonText: 'ตกลง',
       })
     },
+    popupadd() {
+      this.$swal({
+        title: 'ท่านไม่มีสิทธิเพิ่มหรือแก้ข้อมูล',
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#069A8E',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'เข้าสู่ระบบ',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.$emit('calllogin', 'calllogin dialog')
+        }
+      })
+    },
     clear() {
       this.username = ''
       this.password = ''
@@ -657,5 +713,8 @@ export default {
 <style>
 #app {
   font-family: 'Trirong', serif;
+}
+.text-green input {
+  color: #069a8e !important;
 }
 </style>
