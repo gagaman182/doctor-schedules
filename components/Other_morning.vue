@@ -89,7 +89,7 @@ import Edit_schedule_department from '~/components/Edit_schedule_department.vue'
 import moment from 'moment'
 import { format, parseISO } from 'date-fns'
 export default {
-  props: ['datestart'],
+  props: ['datestart', 'session', 'authenticated'],
   data() {
     return {
       schedule_intime: '',
@@ -104,6 +104,8 @@ export default {
       datestart_change: '',
       renderComponent: true,
       showdate: '',
+      token: '',
+      user: '',
     }
   },
   computed: {
@@ -172,21 +174,37 @@ export default {
     },
 
     async edit_schedule(uhid) {
-      this.uhid = uhid
-      // alert(this.uhid)
-      await axios
-        .post(`${this.$axios.defaults.baseURL}schedules_select_id.php`, {
-          uhid: this.uhid,
-        })
-        .then((response) => {
-          this.schedule_staff_id = response.data
-          if (this.dialog_dp == true) {
-            this.dialog_dp = false
-            this.dialog_dp = true
-          } else {
-            this.dialog_dp = true
+      if (this.session == false) {
+        this.$swal({
+          title: 'ท่านไม่มีสิทธิเพิ่มหรือแก้ข้อมูล',
+          icon: 'warning',
+          showCancelButton: true,
+          cancelButtonText: 'ยกเลิก',
+          confirmButtonColor: '#069A8E',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'เข้าสู่ระบบ',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.$emit('calllogin', 'calllogin dialog')
           }
         })
+      } else {
+        this.uhid = uhid
+        // alert(this.uhid)
+        await axios
+          .post(`${this.$axios.defaults.baseURL}schedules_select_id.php`, {
+            uhid: this.uhid,
+          })
+          .then((response) => {
+            this.schedule_staff_id = response.data
+            if (this.dialog_dp == true) {
+              this.dialog_dp = false
+              this.dialog_dp = true
+            } else {
+              this.dialog_dp = true
+            }
+          })
+      }
     },
     //ส่งค่า false กลับมา
     close_dp_dialog(dp) {
@@ -200,6 +218,34 @@ export default {
           this.departments = response.data
         })
     },
+    login_load() {
+      if (localStorage.getItem('token')) {
+        this.session = JSON.parse(localStorage.getItem('token'))
+        if (this.session == null) {
+        } else {
+          this.user = this.session[0].fullname
+          this.token = this.session[0].token
+          // login 2 ชม ถ้าเกินให้ออก แล้ว clear localstorage
+          this.hours = 2
+          this.saved = localStorage.getItem('saved')
+          if (
+            this.saved &&
+            new Date().getTime() - this.saved > this.hours * 60 * 60 * 1000
+          ) {
+            localStorage.clear()
+            this.$router.push('/')
+          }
+        }
+      } else {
+      }
+    },
+
+    logout() {
+      location.reload()
+    },
+  },
+  beforeMount() {
+    this.login_load()
   },
 }
 </script>

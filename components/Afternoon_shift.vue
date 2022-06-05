@@ -125,7 +125,7 @@ import Edit_schedule_er from '~/components/Edit_schedule_er.vue'
 import moment from 'moment'
 import { format, parseISO } from 'date-fns'
 export default {
-  props: ['datestart'],
+  props: ['datestart', 'session', 'authenticated'],
   data() {
     return {
       schedule_staff: '',
@@ -140,6 +140,8 @@ export default {
       datestart_change: '',
       renderComponent: true,
       showdate: '',
+      token: '',
+      user: '',
     }
   },
   computed: {
@@ -229,25 +231,69 @@ export default {
         })
     },
     async edit_schedule(uhid) {
-      this.uhid = uhid
-      await axios
-        .post(`${this.$axios.defaults.baseURL}schedules_select_id.php`, {
-          uhid: this.uhid,
-        })
-        .then((response) => {
-          this.schedule_staff_id = response.data
-          if (this.dialog_er == true) {
-            this.dialog_er = false
-            this.dialog_er = true
-          } else {
-            this.dialog_er = true
+      if (this.session == false) {
+        this.$swal({
+          title: 'ท่านไม่มีสิทธิเพิ่มหรือแก้ข้อมูล',
+          icon: 'warning',
+          showCancelButton: true,
+          cancelButtonText: 'ยกเลิก',
+          confirmButtonColor: '#069A8E',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'เข้าสู่ระบบ',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.$emit('calllogin', 'calllogin dialog')
           }
         })
+      } else {
+        this.uhid = uhid
+        await axios
+          .post(`${this.$axios.defaults.baseURL}schedules_select_id.php`, {
+            uhid: this.uhid,
+          })
+          .then((response) => {
+            this.schedule_staff_id = response.data
+            if (this.dialog_er == true) {
+              this.dialog_er = false
+              this.dialog_er = true
+            } else {
+              this.dialog_er = true
+            }
+          })
+      }
     },
     //ส่งค่า false กลับมา
     close_er_dialog(er) {
       this.dialog_er = er
     },
+    login_load() {
+      if (localStorage.getItem('token')) {
+        this.session = JSON.parse(localStorage.getItem('token'))
+        if (this.session == null) {
+        } else {
+          this.user = this.session[0].fullname
+          this.token = this.session[0].token
+          // login 2 ชม ถ้าเกินให้ออก แล้ว clear localstorage
+          this.hours = 2
+          this.saved = localStorage.getItem('saved')
+          if (
+            this.saved &&
+            new Date().getTime() - this.saved > this.hours * 60 * 60 * 1000
+          ) {
+            localStorage.clear()
+            this.$router.push('/')
+          }
+        }
+      } else {
+      }
+    },
+
+    logout() {
+      location.reload()
+    },
+  },
+  beforeMount() {
+    this.login_load()
   },
 }
 </script>

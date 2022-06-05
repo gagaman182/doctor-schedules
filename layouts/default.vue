@@ -55,6 +55,29 @@
       <!-- <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>mdi-menu</v-icon>
       </v-btn> -->
+      <v-spacer />
+      <!-- <v-btn icon @click.stop="rightDrawer = !rightDrawer">
+        <v-icon>mdi-menu</v-icon>
+      </v-btn> -->
+
+      <!-- <div class="text-center">
+        <v-menu open-on-hover top offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn color="#FFAFAF" dark v-bind="attrs" v-on="on">
+              <v-icon>mdi-menu</v-icon>
+            </v-btn>
+          </template>
+          <v-list-item-group v-model="selectedItem">
+            <v-list color="#FFAFAF">
+              <v-list-item class="white--text">
+                <v-list-item-title @click="login">
+                  เข้าสู่ระบบ
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-list-item-group>
+        </v-menu>
+      </div> -->
     </v-app-bar>
 
     <v-main>
@@ -105,13 +128,22 @@ export default {
       rightDrawer: false,
       title: 'ตารางเวรแพทย์',
       dialog: false,
+      itemmenu: [{ title: 'ออกจากระบบ' }, { title: 'เข้าสู่ระบบ' }],
+      // dialog_login: false,
+      user: '',
     }
   },
   methods: {
     add_schedule() {
       this.dialog = true
     },
+    // login() {
+    //   this.dialog_login = true
+    // },
   },
+  // beforeMount() {
+  //   this.login()
+  // },
 }
 </script>
 </script>

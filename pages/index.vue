@@ -44,7 +44,7 @@
       <v-card>
         <v-card-title class="text-h4 red--text">
           <!-- Emergency Room -->
-          แผนกอุบัติเหตุและฉุกเฉิน
+          แผนกอุบัติเหตุและฉุกเฉิน{{ erbtnshow }}
           <v-icon class="text-h3 mb-2 red--text">mdi-car-emergency </v-icon>
           <v-switch
             class="mb-2 pt-5 ml-2"
@@ -53,6 +53,24 @@
             inset
             @change="erchange"
           ></v-switch>
+          <div class="ml-4 mt-2 text-h6 blue--text">
+            สถานะผู้ใช้งาน:{{ user }}
+          </div>
+          <div class="ml-1" v-show="authenticated">
+            <v-tooltip bottom color="red">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  @click="logout()"
+                  plain
+                  class="text-h6"
+                  v-bind="attrs"
+                  v-on="on"
+                  ><v-icon color="red" large>mdi-location-exit </v-icon></v-btn
+                >
+              </template>
+              <span>ออกจากระบบ</span>
+            </v-tooltip>
+          </div>
           <v-spacer />
 
           <div class="pr-2 mt-7">
@@ -88,18 +106,37 @@
             </v-menu>
           </div>
           <div class="pr-2">
-            <v-btn class="white--text" x-large color="#F8B400" @click="refresh">
-              <v-icon>mdi-refresh-circle </v-icon>
-            </v-btn>
+            <v-tooltip bottom color="#F8B400" v-if="ershow">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="white--text"
+                  x-large
+                  color="#F8B400"
+                  @click="refresh"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>mdi-refresh-circle </v-icon>
+                </v-btn>
+              </template>
+              <span>รีเฟรชหน้าจอ</span>
+            </v-tooltip>
           </div>
-          <v-btn
-            class="white--text"
-            x-large
-            color="#069A8E"
-            @click="open_er_dialog"
-          >
-            <v-icon>mdi-calendar-plus </v-icon>
-          </v-btn>
+          <v-tooltip bottom color="#069A8E" v-if="ershow">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                class="white--text"
+                x-large
+                color="#069A8E"
+                @click="open_er_dialog"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-calendar-plus </v-icon>
+              </v-btn>
+            </template>
+            <span>เพิ่มข้อมูล</span>
+          </v-tooltip>
         </v-card-title>
         <!-- <v-divider /> -->
 
@@ -111,6 +148,9 @@
                 ref="datechange_morning"
                 v-if="renderComponent"
                 @rerenderparent="reredereditparent"
+                @calllogin="call_login"
+                :session="session"
+                :authenticated="authenticated"
             /></v-col>
             <v-col cols="12" sm="4" v-else>
               <v-skeleton-loader
@@ -125,6 +165,9 @@
                 ref="datechange_afternoon"
                 v-if="renderComponent"
                 @rerenderparent="reredereditparent"
+                @calllogin="call_login"
+                :session="session"
+                :authenticated="authenticated"
               />
             </v-col>
             <v-col cols="12" sm="4" v-else>
@@ -140,6 +183,9 @@
                 ref="datechange_night"
                 v-if="renderComponent"
                 @rerenderparent="reredereditparent"
+                @calllogin="call_login"
+                :session="session"
+                :authenticated="authenticated"
             /></v-col>
             <v-col cols="12" sm="4" v-else>
               <v-skeleton-loader
@@ -168,19 +214,37 @@
           ></v-switch>
           <v-spacer />
           <div class="pr-2">
-            <v-btn class="white--text" x-large color="#F8B400" @click="refresh">
-              <v-icon>mdi-refresh-circle </v-icon>
-            </v-btn>
+            <v-tooltip bottom color="#F8B400" v-if="dpshow">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="white--text"
+                  x-large
+                  color="#F8B400"
+                  @click="refresh"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>mdi-refresh-circle </v-icon>
+                </v-btn>
+              </template>
+              <span>รีเฟรชหน้าจอ</span>
+            </v-tooltip>
           </div>
-
-          <v-btn
-            class="white--text"
-            x-large
-            color="#069A8E"
-            @click="open_dp_dialog"
-          >
-            <v-icon>mdi-calendar-plus </v-icon>
-          </v-btn>
+          <v-tooltip bottom color="#069A8E" v-if="dpshow">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                class="white--text"
+                x-large
+                color="#069A8E"
+                @click="open_dp_dialog"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-calendar-plus </v-icon>
+              </v-btn>
+            </template>
+            <span>เพิ่มข้อมูล</span>
+          </v-tooltip>
         </v-card-title>
         <!-- <v-divider /> -->
 
@@ -199,7 +263,7 @@
                 color="#069A8E"
                 @change="depart_select()"
               ></v-autocomplete> -->
-
+              <h3 class="ml-2 mb-2 title">เลือกแผนกที่จะแสดงข้อมูล</h3>
               <v-select
                 :items="departments"
                 v-model="department"
@@ -219,6 +283,9 @@
                 ref="usedepartin"
                 v-if="renderComponent"
                 @rerenderparent="reredereditparent"
+                @calllogin="call_login"
+                :session="session"
+                :authenticated="authenticated"
             /></v-col>
             <v-col cols="12" sm="6" v-else>
               <v-skeleton-loader
@@ -233,6 +300,9 @@
                 ref="usedepartout"
                 v-if="renderComponent"
                 @rerenderparent="reredereditparent"
+                @calllogin="call_login"
+                :session="session"
+                :authenticated="authenticated"
             /></v-col>
             <v-col cols="12" sm="6" v-else>
               <v-skeleton-loader
@@ -252,6 +322,58 @@
         :dialog_dp="dialog_dp"
         @closedialog_dp="close_dp_dialog"
       />
+    </v-col>
+    <v-col cols="auto">
+      <v-dialog
+        transition="dialog-bottom-transition"
+        max-width="600"
+        v-model="dialog_login"
+      >
+        <!-- <template v-slot:activator="{ on, attrs }">
+          <v-btn color="primary" v-bind="attrs" v-on="on"
+            >From the bottom</v-btn
+          >
+        </template> -->
+        <template v-slot:default="dialog_login">
+          <v-card class="elevation-12">
+            <v-toolbar dark color="#069A8E">
+              <v-toolbar-title>เข้าสู่ระบบ</v-toolbar-title>
+              <v-spacer />
+              <v-btn
+                class="mx-2"
+                fab
+                dark
+                small
+                color="red"
+                @click="close_login()"
+              >
+                <v-icon dark> mdi-close </v-icon>
+              </v-btn>
+            </v-toolbar>
+
+            <v-card-text>
+              <v-form>
+                <v-text-field
+                  prepend-icon="mdi-account "
+                  label="ชื่อเข้าใช้งาน"
+                  type="text"
+                  v-model="username"
+                ></v-text-field>
+                <v-text-field
+                  prepend-icon="mdi-lock "
+                  label="รหัสผ่าน"
+                  type="password"
+                  v-model="password"
+                ></v-text-field>
+              </v-form>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="#069A8E" dark @click="login()">ตกลง</v-btn>
+            </v-card-actions>
+          </v-card>
+        </template>
+      </v-dialog>
     </v-col>
   </v-row>
 </template>
@@ -292,6 +414,15 @@ export default {
       dpshow: true,
       ershow_text: 'ซ่อน',
       dpshow_text: 'ซ่อน',
+      dialog_login: false,
+
+      username: '',
+      password: '',
+      token: '',
+      session: '',
+      user: 'ผู้ใช้ทั่วไป',
+      authenticated: false,
+      saved: '',
     }
   },
   computed: {
@@ -305,6 +436,16 @@ export default {
         ? moment(this.datestart).locale('th').format('dddd LL')
         : ''
     },
+    computedcuser: function () {
+      // if (this.session == null) {
+      //   this.user = 'ทั่วไป'
+      // } else {
+      //   this.user = this.session[0].fullname
+      // }
+      // return this.session
+      //   ? (this.session = JSON.parse(localStorage.getItem('token')))
+      //   : ''
+    },
   },
   components: {
     Morning_shift,
@@ -317,12 +458,19 @@ export default {
   },
   mounted() {
     this.fecth_department()
+    // if (!JSON.parse(localStorage.getItem('token'))) {
+    //   this.session = '0'
+    // } else {
+    //   this.session = JSON.parse(localStorage.getItem('token'))
+    // }
   },
   methods: {
     erchange() {
       if (this.ershow == true) {
+        this.erbtnshow = false
         this.ershow_text = 'ซ่อน'
       } else if (this.ershow == false) {
+        this.erbtnshow = true
         this.ershow_text = 'แสดง'
       }
     },
@@ -344,6 +492,8 @@ export default {
         // Adding the component back in
         this.renderComponent = true
       })
+      // this.session = JSON.parse(localStorage.getItem('token'))
+      // this.user = this.session[0].fullname
     },
     //er
     open_er_dialog() {
@@ -358,7 +508,7 @@ export default {
     close_er_dialog(er) {
       this.dialog_er = er
 
-      // this.forceRerender()
+      this.forceRerender()
 
       // this.$forceUpdate()
       // this.$nuxt.refresh()
@@ -376,7 +526,7 @@ export default {
     //ส่งค่า false กลับมา
     close_dp_dialog(dp) {
       this.dialog_dp = dp
-      // this.forceRerender()
+      this.forceRerender()
     },
     refresh() {
       // this.$forceUpdate()
@@ -421,6 +571,86 @@ export default {
       this.forceRerender()
       this.menu = false
     },
+    call_login() {
+      this.dialog_login = true
+    },
+    close_login() {
+      this.dialog_login = false
+    },
+    login() {
+      axios
+        .post(`${this.$axios.defaults.baseURL}login_check.php`, {
+          user: this.username,
+          pass: this.password,
+        })
+
+        .then((response) => {
+          this.tokens = response.data
+          localStorage.setItem('token', JSON.stringify(this.tokens))
+          localStorage.setItem('saved', new Date().getTime())
+          this.token = JSON.parse(localStorage.getItem('token'))
+          if (this.token[0].state == 'no') {
+            this.popuplogin()
+            this.clear()
+            this.dialog_login = true
+            this.authenticated = false
+          } else {
+            this.dialog_login = false
+            this.forceRerender()
+            this.session = JSON.parse(localStorage.getItem('token'))
+            this.user = this.session[0].fullname
+            this.authenticated = true
+            // login 2 ชม ถ้าเกินให้ออก แล้ว clear localstorage
+            this.hours = 2
+            this.saved = localStorage.getItem('saved')
+            if (
+              this.saved &&
+              new Date().getTime() - this.saved > this.hours * 60 * 60 * 1000
+            ) {
+              localStorage.clear()
+              this.$router.push('/')
+            }
+          }
+        })
+    },
+    popuplogin() {
+      this.$swal({
+        title: 'แจ้งเตือน',
+        text: 'ท่านไม่ได้รับอณุญาติให้เข้าสู่ระบบ',
+        icon: 'error',
+        confirmButtonText: 'ตกลง',
+      })
+    },
+    clear() {
+      this.username = ''
+      this.password = ''
+    },
+
+    login_load() {
+      if (localStorage.getItem('token')) {
+        this.session = JSON.parse(localStorage.getItem('token'))
+        if (this.session == null) {
+          this.authenticated = false
+        } else {
+          this.authenticated = true
+          this.user = this.session[0].fullname
+          this.token = this.session[0].token
+        }
+      } else {
+        // alert('session ว่าง')
+      }
+    },
+    logout() {
+      localStorage.removeItem('token')
+      localStorage.clear()
+      this.forceRerender()
+      this.$refs.datechange_morning.logout()
+      this.$refs.datechange_afternoon.logout()
+      this.$refs.datechange_night.logout()
+    },
+  },
+  beforeMount() {
+    this.login_load()
   },
 }
 </script>
