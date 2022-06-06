@@ -16,8 +16,9 @@
 
 
 // takis 2
-$servername = "61.19.25.207";
-//$servername = "172.16.99.207";
+//$servername = "61.19.25.207";
+$servername = "172.16.99.207";
+//$servername = "localhost";
 $username = "takis2";
 $password = "skho5005";
 $dbname = "doctor_schedule";

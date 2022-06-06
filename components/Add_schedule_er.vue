@@ -288,6 +288,7 @@ export default {
     close_er_dialog(event) {
       this.dialog_er = false
       this.$emit('closedialog_er', this.dialog_er)
+      this.clear_form()
     },
     // ดึง doctor
     async fecth_doctor() {

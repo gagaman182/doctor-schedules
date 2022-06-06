@@ -64,6 +64,7 @@ export default {
         // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
         // baseURL: '/',
         baseURL: 'http://localhost/doctor-schedule/backend/',
+        //baseURL: '  http://61.19.25.207/doctor-schedules/backend/',
 
     },
 
