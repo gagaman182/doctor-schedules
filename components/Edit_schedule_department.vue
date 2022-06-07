@@ -396,7 +396,12 @@ export default {
       } else {
         this.$swal({
           title: 'คุณแน่ใจว่าต้องการลบข้อมูลนี้?',
-          text: 'แพทย์ ' + this.doctor_name + ' เวรวันที่ ' + this.datestart,
+          // text: 'แพทย์ ' + this.doctor_name + ' เวรวันที่ ' + this.datestart,
+          text:
+            'แพทย์ ' +
+            this.doctor_name +
+            ' เวรวันที่ ' +
+            this.computedDateFormattedMomentjs,
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#51adcf',

@@ -6,9 +6,7 @@ include 'conn.php';
 
 
 // $sql = "SELECT doc_code,concat(doc_code,'-',name) as name  from doctor
-$sql = "SELECT *  from department where name <> 'ER'
-     
-      ";
+$sql = "SELECT *  from department where name <> 'ER'";
 
 
 $return_arr = array();

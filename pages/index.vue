@@ -42,9 +42,9 @@
         </v-alert> -->
 
       <v-card>
-        <v-card-title class="text-h4 red--text">
+        <v-card-title class="text-h4 red--text mt-0 pt-0">
           <!-- Emergency Room -->
-          แผนกอุบัติเหตุและฉุกเฉิน{{ erbtnshow }}
+          แผนกอุบัติเหตุและฉุกเฉิน
           <v-icon class="text-h3 mb-2 red--text">mdi-car-emergency </v-icon>
           <v-switch
             class="mb-2 pt-5 ml-2"
@@ -151,8 +151,9 @@
 
         <v-card-text v-show="ershow">
           <v-row>
-            <v-col cols="12" sm="4" v-if="showdashboard">
+            <v-col cols="12" sm="4" v-if="showdashboard" class="mt-0 pt-0">
               <Morning_shift
+                class="mt-0 mb-0 pb-0"
                 :datestart="datestart"
                 ref="datechange_morning"
                 v-if="renderComponent"
@@ -161,15 +162,16 @@
                 :session="session"
                 :authenticated="authenticated"
             /></v-col>
-            <v-col cols="12" sm="4" v-else>
+            <v-col cols="12" sm="4" v-else class="mt-0 pt-0">
               <v-skeleton-loader
                 class="mx-auto"
                 max-width="300"
                 type="card"
               ></v-skeleton-loader>
             </v-col>
-            <v-col cols="12" sm="4" v-if="showdashboard">
+            <v-col cols="12" sm="4" v-if="showdashboard" class="mt-0 pt-0">
               <Afternoon_shift
+                class="mt-0 mb-0 pb-0"
                 :datestart="datestart"
                 ref="datechange_afternoon"
                 v-if="renderComponent"
@@ -179,15 +181,16 @@
                 :authenticated="authenticated"
               />
             </v-col>
-            <v-col cols="12" sm="4" v-else>
+            <v-col cols="12" sm="4" v-else class="mt-0 pt-0">
               <v-skeleton-loader
                 class="mx-auto"
                 max-width="300"
                 type="card"
               ></v-skeleton-loader>
             </v-col>
-            <v-col cols="12" sm="4" v-if="showdashboard">
+            <v-col cols="12" sm="4" v-if="showdashboard" class="mt-0 pt-0">
               <Night_shirt
+                class="mt-0 mb-0 pb-0"
                 :datestart="datestart"
                 ref="datechange_night"
                 v-if="renderComponent"
@@ -196,7 +199,7 @@
                 :session="session"
                 :authenticated="authenticated"
             /></v-col>
-            <v-col cols="12" sm="4" v-else>
+            <v-col cols="12" sm="4" v-else class="mt-0 pt-0">
               <v-skeleton-loader
                 class="mx-auto"
                 max-width="300"
@@ -207,7 +210,7 @@
         </v-card-text>
       </v-card>
       <v-card>
-        <v-card-title class="text-h4 blue--text">
+        <v-card-title class="text-h4 blue--text mt-0 pt-0">
           <!-- Other Departments -->
           แผนกอื่นๆ
 
@@ -259,7 +262,7 @@
 
         <v-card-text v-show="dpshow">
           <v-row>
-            <v-col cols="12" sm="12">
+            <v-col cols="12" sm="12" class="mt-0 pt-0">
               <!-- <v-autocomplete
                 :items="departments"
                 v-model="department"
@@ -286,8 +289,9 @@
                 @change="depart_select()"
               ></v-select>
             </v-col>
-            <v-col cols="12" sm="6" v-if="showdashboard"
+            <v-col cols="12" sm="6" v-if="showdashboard" class="pt-0"
               ><Other_morning
+                class="pt-0"
                 :datestart="datestart"
                 ref="usedepartin"
                 v-if="renderComponent"
@@ -303,7 +307,7 @@
                 type="card"
               ></v-skeleton-loader>
             </v-col>
-            <v-col cols="12" sm="6" v-if="showdashboard"
+            <v-col cols="12" sm="6" v-if="showdashboard" class="pt-0"
               ><Other_night
                 :datestart="datestart"
                 ref="usedepartout"
@@ -716,5 +720,9 @@ export default {
 }
 .text-green input {
   color: #069a8e !important;
+}
+
+.dd {
+  magin-top: 0px;
 }
 </style>
